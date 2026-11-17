@@ -16,6 +16,7 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/rooms', [GameRoomController::class, 'store']);
         Route::get('/rooms/{code}', [GameRoomController::class, 'show']);
         Route::post('/rooms/{code}/join', [GameRoomController::class, 'join']);
+        Route::delete('/rooms/{code}', [GameRoomController::class, 'destroy']);
         Route::post('/matchmaking', [MatchmakingController::class, 'store']);
         Route::get('/matchmaking', [MatchmakingController::class, 'show']);
         Route::delete('/matchmaking', [MatchmakingController::class, 'destroy']);

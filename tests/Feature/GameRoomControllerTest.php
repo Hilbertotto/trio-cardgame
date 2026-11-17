@@ -70,6 +70,33 @@ class GameRoomControllerTest extends TestCase
             ->assertJsonPath('message', 'A szoba nem található.');
     }
 
+    public function test_player_can_leave_waiting_room_and_free_the_seat(): void
+    {
+        $host = User::factory()->guest()->create();
+        $player = User::factory()->guest()->create();
+
+        Sanctum::actingAs($host);
+        $roomCode = $this->postJson('/api/v1/rooms', ['player_count' => 3])->json('data.code');
+
+        Sanctum::actingAs($player);
+        $this->postJson("/api/v1/rooms/{$roomCode}/join")->assertSuccessful();
+        $this->deleteJson("/api/v1/rooms/{$roomCode}")->assertNoContent();
+
+        $this->assertDatabaseMissing('game_room_user', ['user_id' => $player->id]);
+        $this->assertDatabaseHas('game_rooms', ['code' => $roomCode]);
+    }
+
+    public function test_empty_waiting_room_is_deleted_when_host_leaves(): void
+    {
+        $host = User::factory()->guest()->create();
+        Sanctum::actingAs($host);
+        $roomCode = $this->postJson('/api/v1/rooms', ['player_count' => 3])->json('data.code');
+
+        $this->deleteJson("/api/v1/rooms/{$roomCode}")->assertNoContent();
+
+        $this->assertDatabaseMissing('game_rooms', ['code' => $roomCode]);
+    }
+
     public function test_returns_401_when_room_is_created_without_token(): void
     {
         $this->postJson('/api/v1/rooms', ['player_count' => 3])->assertUnauthorized();
