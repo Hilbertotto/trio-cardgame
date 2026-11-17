@@ -61,6 +61,15 @@ class GameRoomControllerTest extends TestCase
             ->assertJsonValidationErrors('room');
     }
 
+    public function test_returns_friendly_404_when_room_code_does_not_exist(): void
+    {
+        Sanctum::actingAs(User::factory()->guest()->create());
+
+        $this->postJson('/api/v1/rooms/ABC123/join')
+            ->assertNotFound()
+            ->assertJsonPath('message', 'A szoba nem található.');
+    }
+
     public function test_returns_401_when_room_is_created_without_token(): void
     {
         $this->postJson('/api/v1/rooms', ['player_count' => 3])->assertUnauthorized();

@@ -6,6 +6,7 @@ use App\Models\GameRoom;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class JoinGameRoomAction
 {
@@ -15,7 +16,11 @@ class JoinGameRoomAction
             $room = GameRoom::query()
                 ->where('code', mb_strtoupper($code))
                 ->lockForUpdate()
-                ->firstOrFail();
+                ->first();
+
+            if ($room === null) {
+                throw new NotFoundHttpException('A szoba nem található.');
+            }
 
             if ($room->status !== 'waiting') {
                 throw ValidationException::withMessages(['room' => 'A szobához már nem lehet csatlakozni.']);
