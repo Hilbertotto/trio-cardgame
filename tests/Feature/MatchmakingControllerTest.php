@@ -48,6 +48,30 @@ class MatchmakingControllerTest extends TestCase
         $this->assertDatabaseCount('game_room_user', 3);
         $this->assertDatabaseCount('matchmaking_entries', 3);
         $this->assertDatabaseMissing('matchmaking_entries', ['status' => 'waiting']);
+
+        Sanctum::actingAs($players[0]);
+        $this->getJson('/api/v1/matchmaking')
+            ->assertSuccessful()
+            ->assertJsonPath('status', 'matched')
+            ->assertJsonCount(3, 'room.players');
+    }
+
+    public function test_player_can_check_waiting_queue_status(): void
+    {
+        $player = User::factory()->guest()->create();
+        Sanctum::actingAs($player);
+
+        $this->getJson('/api/v1/matchmaking')
+            ->assertSuccessful()
+            ->assertJsonPath('status', 'idle')
+            ->assertJsonPath('room', null);
+
+        $this->postJson('/api/v1/matchmaking', ['player_count' => 4]);
+
+        $this->getJson('/api/v1/matchmaking')
+            ->assertSuccessful()
+            ->assertJsonPath('status', 'waiting')
+            ->assertJsonPath('room', null);
     }
 
     public function test_player_can_leave_waiting_queue(): void

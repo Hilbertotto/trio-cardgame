@@ -12,6 +12,21 @@ use Illuminate\Http\Request;
 
 class MatchmakingController extends Controller
 {
+    public function show(Request $request): JsonResponse
+    {
+        $entry = MatchmakingEntry::query()
+            ->whereBelongsTo($request->user())
+            ->with('gameRoom.players')
+            ->first();
+
+        return response()->json([
+            'status' => $entry?->status ?? 'idle',
+            'room' => $entry?->gameRoom === null
+                ? null
+                : new GameRoomResource($entry->gameRoom),
+        ]);
+    }
+
     public function store(JoinMatchmakingRequest $request, JoinMatchmakingAction $action): JsonResponse
     {
         $room = $action->handle($request->user(), $request->integer('player_count'));
