@@ -10,6 +10,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class JoinGameRoomAction
 {
+    public function __construct(private StartGameRoomAction $startGameRoom) {}
+
     public function handle(string $code, User $player): GameRoom
     {
         return DB::transaction(function () use ($code, $player): GameRoom {
@@ -40,6 +42,10 @@ class JoinGameRoomAction
                 ->first(fn (int $candidate): bool => ! $occupiedSeats->contains($candidate));
 
             $room->players()->attach($player, ['seat' => $seat]);
+
+            if ($room->players()->count() >= $room->player_count) {
+                return $this->startGameRoom->handle($room);
+            }
 
             return $room->load('players');
         });

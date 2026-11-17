@@ -101,4 +101,55 @@ class GameRoomControllerTest extends TestCase
     {
         $this->postJson('/api/v1/rooms', ['player_count' => 3])->assertUnauthorized();
     }
+
+    public function test_full_room_starts_once_and_players_share_the_same_deal(): void
+    {
+        $players = User::factory()->guest()->count(3)->create();
+        Sanctum::actingAs($players[0]);
+        $roomCode = $this->postJson('/api/v1/rooms', ['player_count' => 3])->json('data.code');
+
+        foreach ($players->skip(1) as $player) {
+            Sanctum::actingAs($player);
+            $this->postJson("/api/v1/rooms/{$roomCode}/join")->assertSuccessful();
+        }
+
+        Sanctum::actingAs($players[0]);
+        $first = $this->getJson("/api/v1/rooms/{$roomCode}")
+            ->assertJsonPath('data.status', 'playing')
+            ->assertJsonPath('data.my_seat', 1)
+            ->assertJsonCount(3, 'data.state.hands')
+            ->assertJsonCount(9, 'data.state.table')
+            ->json('data.state');
+
+        Sanctum::actingAs($players[1]);
+        $this->getJson("/api/v1/rooms/{$roomCode}")
+            ->assertJsonPath('data.my_seat', 2)
+            ->assertJsonPath('data.state', $first);
+    }
+
+    public function test_current_player_can_reveal_a_table_card(): void
+    {
+        $players = User::factory()->guest()->count(3)->create();
+        Sanctum::actingAs($players[0]);
+        $roomCode = $this->postJson('/api/v1/rooms', ['player_count' => 3])->json('data.code');
+        foreach ($players->skip(1) as $player) {
+            Sanctum::actingAs($player);
+            $this->postJson("/api/v1/rooms/{$roomCode}/join");
+        }
+
+        Sanctum::actingAs($players[0]);
+        $value = $this->getJson("/api/v1/rooms/{$roomCode}")->json('data.state.table.0');
+        $this->postJson("/api/v1/rooms/{$roomCode}/play", [
+            'source' => 'table',
+            'slot' => 0,
+        ])->assertSuccessful()
+            ->assertJsonPath('data.state.table.0', null)
+            ->assertJsonPath('data.state.revealed.0.value', $value);
+
+        Sanctum::actingAs($players[1]);
+        $this->postJson("/api/v1/rooms/{$roomCode}/play", [
+            'source' => 'table',
+            'slot' => 1,
+        ])->assertUnprocessable()->assertJsonValidationErrors('move');
+    }
 }

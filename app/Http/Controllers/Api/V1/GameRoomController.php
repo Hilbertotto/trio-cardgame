@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\CreateGameRoomAction;
 use App\Actions\JoinGameRoomAction;
+use App\Actions\PlayGameRoomCardAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreGameRoomRequest;
 use App\Http\Resources\GameRoomResource;
@@ -21,7 +22,7 @@ class GameRoomController extends Controller
         return new GameRoomResource($room);
     }
 
-    public function show(Request $request, string $code): GameRoomResource
+    public function show(Request $request, string $code, PlayGameRoomCardAction $play): GameRoomResource
     {
         $room = GameRoom::query()
             ->where('code', mb_strtoupper($code))
@@ -29,7 +30,7 @@ class GameRoomController extends Controller
             ->with('players')
             ->firstOrFail();
 
-        return new GameRoomResource($room);
+        return new GameRoomResource($play->refresh($room));
     }
 
     public function join(Request $request, string $code, JoinGameRoomAction $action): GameRoomResource
@@ -65,5 +66,20 @@ class GameRoomController extends Controller
         });
 
         return response()->noContent();
+    }
+
+    public function play(Request $request, string $code, PlayGameRoomCardAction $action): GameRoomResource
+    {
+        $validated = $request->validate([
+            'source' => ['required', 'in:table,hand'],
+            'owner_seat' => ['nullable', 'integer', 'min:1', 'max:6'],
+            'slot' => ['required', 'integer', 'min:0', 'max:11'],
+        ]);
+        $room = GameRoom::query()
+            ->where('code', mb_strtoupper($code))
+            ->whereHas('players', fn ($query) => $query->whereKey($request->user()->id))
+            ->firstOrFail();
+
+        return new GameRoomResource($action->handle($room, $request->user(), $validated));
     }
 }

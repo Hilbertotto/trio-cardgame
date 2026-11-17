@@ -12,6 +12,7 @@ class JoinMatchmakingAction
     public function __construct(
         private CreateGameRoomAction $createGameRoom,
         private JoinGameRoomAction $joinGameRoom,
+        private StartGameRoomAction $startGameRoom,
     ) {}
 
     public function handle(User $player, int $playerCount): GameRoom
@@ -76,6 +77,7 @@ class JoinMatchmakingAction
                 MatchmakingEntry::query()
                     ->where('game_room_id', $room->id)
                     ->update(['status' => 'matched']);
+                $room = $this->startGameRoom->handle($room);
             }
 
             return $room;
