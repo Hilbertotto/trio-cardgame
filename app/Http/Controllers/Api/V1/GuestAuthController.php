@@ -28,6 +28,7 @@ class GuestAuthController extends Controller
             'email' => $identifier.'@guest.trio.local',
             'password' => Hash::make(Str::random(64)),
             'is_guest' => true,
+            'avatar_id' => random_int(1, 40),
         ]);
         $user->refresh();
 
