@@ -14,39 +14,71 @@ class JoinMatchmakingAction
         private JoinGameRoomAction $joinGameRoom,
     ) {}
 
-    public function handle(User $player, int $playerCount): ?GameRoom
+    public function handle(User $player, int $playerCount): GameRoom
     {
-        return DB::transaction(function () use ($player, $playerCount): ?GameRoom {
-            MatchmakingEntry::query()->updateOrCreate(
-                ['user_id' => $player->id],
-                ['player_count' => $playerCount, 'status' => 'waiting', 'game_room_id' => null],
-            );
+        return DB::transaction(function () use ($player, $playerCount): GameRoom {
+            $existing = MatchmakingEntry::query()
+                ->whereBelongsTo($player)
+                ->with('gameRoom.players')
+                ->lockForUpdate()
+                ->first();
 
-            $entries = MatchmakingEntry::query()
+            if ($existing?->gameRoom !== null && $existing->player_count === $playerCount) {
+                return $existing->gameRoom;
+            }
+
+            if ($existing !== null) {
+                if ($existing->gameRoom !== null) {
+                    $existing->gameRoom->players()->detach($player->id);
+                }
+                $existing->delete();
+            }
+
+            $candidateEntries = MatchmakingEntry::query()
                 ->where('status', 'waiting')
                 ->where('player_count', $playerCount)
+                ->whereNotNull('game_room_id')
+                ->where('user_id', '!=', $player->id)
                 ->oldest('id')
-                ->limit($playerCount)
                 ->lockForUpdate()
                 ->get();
 
-            if ($entries->count() < $playerCount) {
-                return null;
+            $room = null;
+            foreach ($candidateEntries as $candidate) {
+                $candidateRoom = GameRoom::query()
+                    ->with('players')
+                    ->lockForUpdate()
+                    ->find($candidate->game_room_id);
+
+                if ($candidateRoom !== null
+                    && $candidateRoom->status === 'waiting'
+                    && $candidateRoom->players->count() < $candidateRoom->player_count) {
+                    $room = $candidateRoom;
+                    break;
+                }
             }
 
-            $players = User::query()->whereKey($entries->pluck('user_id'))->get()->keyBy('id');
-            $host = $players->get($entries->first()->user_id);
-            $room = $this->createGameRoom->handle($host, $playerCount);
-
-            foreach ($entries->skip(1) as $entry) {
-                $this->joinGameRoom->handle($room->code, $players->get($entry->user_id));
+            if ($room === null) {
+                $room = $this->createGameRoom->handle($player, $playerCount);
+            } else {
+                $room = $this->joinGameRoom->handle($room->code, $player);
             }
 
-            MatchmakingEntry::query()
-                ->whereKey($entries->pluck('id'))
-                ->update(['status' => 'matched', 'game_room_id' => $room->id]);
+            MatchmakingEntry::query()->create([
+                'user_id' => $player->id,
+                'game_room_id' => $room->id,
+                'player_count' => $playerCount,
+                'status' => 'waiting',
+            ]);
 
-            return $room->load('players');
+            $room->load('players');
+            if ($room->players->count() >= $room->player_count) {
+                MatchmakingEntry::query()
+                    ->where('game_room_id', $room->id)
+                    ->update(['status' => 'matched']);
+            }
+
+            return $room;
         });
     }
 }

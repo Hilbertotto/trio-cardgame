@@ -18,30 +18,38 @@ class MatchmakingControllerTest extends TestCase
 
         $this->postJson('/api/v1/matchmaking', ['player_count' => 3])
             ->assertSuccessful()
-            ->assertJsonPath('status', 'queued')
-            ->assertJsonPath('room', null);
+            ->assertJsonPath('status', 'waiting')
+            ->assertJsonPath('room.player_count', 3)
+            ->assertJsonCount(1, 'room.players');
 
         $this->assertDatabaseHas('matchmaking_entries', [
             'user_id' => $player->id,
             'player_count' => 3,
             'status' => 'waiting',
         ]);
+        $this->assertDatabaseCount('game_rooms', 1);
+        $this->assertDatabaseCount('game_room_user', 1);
     }
 
     public function test_last_required_player_creates_room_for_every_queued_player(): void
     {
         $players = User::factory()->guest()->count(3)->create();
 
-        foreach ($players->take(2) as $player) {
+        $roomCode = null;
+        foreach ($players->take(2) as $index => $player) {
             Sanctum::actingAs($player);
-            $this->postJson('/api/v1/matchmaking', ['player_count' => 3])
-                ->assertJsonPath('status', 'queued');
+            $response = $this->postJson('/api/v1/matchmaking', ['player_count' => 3])
+                ->assertJsonPath('status', 'waiting')
+                ->assertJsonCount($index + 1, 'room.players');
+            $roomCode ??= $response->json('room.code');
+            $this->assertSame($roomCode, $response->json('room.code'));
         }
 
         Sanctum::actingAs($players[2]);
         $this->postJson('/api/v1/matchmaking', ['player_count' => 3])
             ->assertSuccessful()
             ->assertJsonPath('status', 'matched')
+            ->assertJsonPath('room.code', $roomCode)
             ->assertJsonCount(3, 'room.players');
 
         $this->assertDatabaseCount('game_rooms', 1);
@@ -66,22 +74,26 @@ class MatchmakingControllerTest extends TestCase
             ->assertJsonPath('status', 'idle')
             ->assertJsonPath('room', null);
 
-        $this->postJson('/api/v1/matchmaking', ['player_count' => 4]);
+        $response = $this->postJson('/api/v1/matchmaking', ['player_count' => 4]);
+        $roomCode = $response->json('room.code');
 
         $this->getJson('/api/v1/matchmaking')
             ->assertSuccessful()
             ->assertJsonPath('status', 'waiting')
-            ->assertJsonPath('room', null);
+            ->assertJsonPath('room.code', $roomCode)
+            ->assertJsonCount(1, 'room.players');
     }
 
     public function test_player_can_leave_waiting_queue(): void
     {
         $player = User::factory()->guest()->create();
         Sanctum::actingAs($player);
-        $this->postJson('/api/v1/matchmaking', ['player_count' => 4]);
+        $response = $this->postJson('/api/v1/matchmaking', ['player_count' => 4]);
+        $roomCode = $response->json('room.code');
 
         $this->deleteJson('/api/v1/matchmaking')->assertNoContent();
 
         $this->assertDatabaseMissing('matchmaking_entries', ['user_id' => $player->id]);
+        $this->assertDatabaseMissing('game_rooms', ['code' => $roomCode]);
     }
 }
