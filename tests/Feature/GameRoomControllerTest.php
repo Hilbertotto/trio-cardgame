@@ -194,4 +194,30 @@ class GameRoomControllerTest extends TestCase
             ->assertJsonPath('data.forced_disconnect', true)
             ->assertJsonPath('data.turn_timeout_remaining', null);
     }
+
+    public function test_last_human_player_wins_when_every_other_seat_is_taken_over(): void
+    {
+        $players = User::factory()->guest()->count(3)->create();
+        Sanctum::actingAs($players[0]);
+        $roomCode = $this->postJson('/api/v1/rooms', ['player_count' => 3])->json('data.code');
+        foreach ($players->skip(1) as $player) {
+            Sanctum::actingAs($player);
+            $this->postJson("/api/v1/rooms/{$roomCode}/join");
+        }
+
+        $room = \App\Models\GameRoom::query()->where('code', $roomCode)->firstOrFail();
+        $state = $room->state;
+        $state['turn_seat'] = 2;
+        $state['bot_seats'] = [1];
+        $state['turn_started_at'] = now()->subSeconds(41)->toIso8601String();
+        $room->update(['state' => $state]);
+
+        Sanctum::actingAs($players[2]);
+        $this->getJson("/api/v1/rooms/{$roomCode}")
+            ->assertSuccessful()
+            ->assertJsonPath('data.status', 'finished')
+            ->assertJsonPath('data.state.bot_seats', [1, 2])
+            ->assertJsonPath('data.state.winner_seat', 3)
+            ->assertJsonCount(0, 'data.state.revealed');
+    }
 }

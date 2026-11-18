@@ -158,6 +158,16 @@ class PlayGameRoomCardAction
         $state['message'] = "A(z) {$seat}. játékos ideje lejárt — a gép folytatja helyette.";
         $state['version'] = ((int) ($state['version'] ?? 0)) + 1;
 
+        $humanSeats = array_values(array_diff(
+            range(1, count($state['hands'] ?? [])),
+            $state['bot_seats'],
+        ));
+        if (count($humanSeats) === 1) {
+            $winnerSeat = (int) $humanSeats[0];
+            $state['winner_seat'] = $winnerSeat;
+            $state['message'] = "A(z) {$winnerSeat}. játékos nyert, mert ő maradt az egyetlen aktív játékos.";
+        }
+
         return $state;
     }
 
