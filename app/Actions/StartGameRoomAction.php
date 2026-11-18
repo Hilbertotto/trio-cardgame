@@ -39,6 +39,8 @@ class StartGameRoomAction
                 'trios' => array_fill(0, $room->player_count, []),
                 'message' => 'Az 1. játékos következik.',
                 'resolve_at' => null,
+                'turn_started_at' => now()->toIso8601String(),
+                'bot_seats' => [],
                 'winner_seat' => null,
             ],
         ]);

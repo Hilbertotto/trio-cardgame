@@ -152,4 +152,26 @@ class GameRoomControllerTest extends TestCase
             'slot' => 1,
         ])->assertUnprocessable()->assertJsonValidationErrors('move');
     }
+
+    public function test_timed_out_player_is_replaced_by_a_bot_that_makes_a_legal_move(): void
+    {
+        $players = User::factory()->guest()->count(3)->create();
+        Sanctum::actingAs($players[0]);
+        $roomCode = $this->postJson('/api/v1/rooms', ['player_count' => 3])->json('data.code');
+        foreach ($players->skip(1) as $player) {
+            Sanctum::actingAs($player);
+            $this->postJson("/api/v1/rooms/{$roomCode}/join");
+        }
+
+        $this->travel(31)->seconds();
+        Sanctum::actingAs($players[1]);
+        $response = $this->getJson("/api/v1/rooms/{$roomCode}")
+            ->assertSuccessful()
+            ->assertJsonPath('data.state.bot_seats.0', 1)
+            ->assertJsonCount(1, 'data.state.revealed');
+
+        $revealed = $response->json('data.state.revealed.0');
+        $this->assertContains($revealed['source'], ['table', 'hand']);
+        $this->assertSame(1, $response->json('data.state.turn_seat'));
+    }
 }

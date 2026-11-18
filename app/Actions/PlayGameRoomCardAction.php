@@ -80,15 +80,22 @@ class PlayGameRoomCardAction
 
     public function refresh(GameRoom $room): GameRoom
     {
-        if ($room->status !== 'playing' || empty($room->state['resolve_at'])) {
+        if ($room->status !== 'playing') {
             return $room;
         }
 
         return DB::transaction(function () use ($room): GameRoom {
             $locked = GameRoom::query()->with('players')->lockForUpdate()->findOrFail($room->id);
             $state = $this->resolveIfDue($locked->state ?? []);
+            $state = $this->replaceTimedOutPlayer($state);
+            $state = $this->playBotCard($state);
             if ($state !== $locked->state) {
-                $locked->update(['state' => $state]);
+                $changes = ['state' => $state];
+                if (! empty($state['winner_seat'])) {
+                    $changes['status'] = 'finished';
+                    $changes['finished_at'] = now();
+                }
+                $locked->update($changes);
             }
             return $locked->fresh('players');
         });
@@ -115,8 +122,111 @@ class PlayGameRoomCardAction
         $state['revealed'] = [];
         $state['resolve_at'] = null;
         $state['turn_seat'] = ((int) $state['turn_seat'] % count($state['hands'])) + 1;
+        $state['turn_started_at'] = now()->toIso8601String();
         $state['message'] = 'A(z) '.$state['turn_seat'].'. játékos következik.';
         $state['version'] = ((int) ($state['version'] ?? 0)) + 1;
         return $state;
+    }
+
+    private function replaceTimedOutPlayer(array $state): array
+    {
+        if (! empty($state['resolve_at']) || ! empty($state['winner_seat'])) {
+            return $state;
+        }
+
+        $seat = (int) ($state['turn_seat'] ?? 0);
+        $botSeats = array_map('intval', $state['bot_seats'] ?? []);
+        if ($seat < 1 || in_array($seat, $botSeats, true)) {
+            return $state;
+        }
+
+        $startedAt = $state['turn_started_at'] ?? null;
+        if ($startedAt === null) {
+            $state['turn_started_at'] = now()->toIso8601String();
+            return $state;
+        }
+        if (CarbonImmutable::parse($startedAt)->addSeconds(30)->isFuture()) {
+            return $state;
+        }
+
+        $botSeats[] = $seat;
+        sort($botSeats);
+        $state['bot_seats'] = array_values(array_unique($botSeats));
+        $state['message'] = "A(z) {$seat}. játékos ideje lejárt — a gép folytatja helyette.";
+        $state['version'] = ((int) ($state['version'] ?? 0)) + 1;
+
+        return $state;
+    }
+
+    private function playBotCard(array $state): array
+    {
+        $seat = (int) ($state['turn_seat'] ?? 0);
+        if (! in_array($seat, array_map('intval', $state['bot_seats'] ?? []), true)
+            || ! empty($state['resolve_at'])
+            || ! empty($state['winner_seat'])) {
+            return $state;
+        }
+
+        $choices = $this->availableChoices($state);
+        if ($choices === []) {
+            return $state;
+        }
+
+        // A szerveres bot sem használhatja a rejtett lapok értékét a
+        // döntéshez: kizárólag a szabályos helyek közül sorsol.
+        $choice = $choices[array_rand($choices)];
+
+        if ($choice['source'] === 'table') {
+            $state['table'][$choice['slot']] = null;
+        } else {
+            $state['hands'][$choice['ownerSeat'] - 1][$choice['slot']] = null;
+        }
+        $state['revealed'][] = $choice;
+        $values = array_column($state['revealed'], 'value');
+        $state['version'] = ((int) ($state['version'] ?? 0)) + 1;
+
+        if (count($values) > 1 && count(array_unique($values)) > 1) {
+            $state['message'] = 'A gép lapjai nem egyeznek — 2 másodperc múlva folytatjuk.';
+            $state['resolve_at'] = now()->addSeconds(2)->toIso8601String();
+        } elseif (count($values) === 3) {
+            $value = $values[0];
+            $state['trios'][$seat - 1][] = $value;
+            $won = $value === 7 || count($state['trios'][$seat - 1]) >= 3;
+            if ($won) {
+                $state['winner_seat'] = $seat;
+                $state['message'] = "A(z) {$seat}. játékos helyén játszó gép megnyerte a játékot!";
+            } else {
+                $state['message'] = "TRIO! A gép megszerezte a(z) {$value}-es hármast.";
+                $state['resolve_at'] = now()->addSeconds(2)->toIso8601String();
+            }
+        } else {
+            $state['message'] = 'A gép választott.';
+        }
+
+        return $state;
+    }
+
+    /** @return array<int, array{source: string, ownerSeat: int, slot: int, value: int}> */
+    private function availableChoices(array $state): array
+    {
+        $choices = [];
+        foreach ($state['table'] ?? [] as $slot => $value) {
+            if ($value !== null) {
+                $choices[] = ['source' => 'table', 'ownerSeat' => 0, 'slot' => $slot, 'value' => $value];
+            }
+        }
+        foreach ($state['hands'] ?? [] as $handIndex => $hand) {
+            $liveSlots = array_keys(array_filter($hand, fn ($value) => $value !== null));
+            foreach (array_unique($liveSlots === [] ? [] : [min($liveSlots), max($liveSlots)]) as $slot) {
+                $choices[] = [
+                    'source' => 'hand',
+                    'ownerSeat' => $handIndex + 1,
+                    'slot' => $slot,
+                    'value' => $hand[$slot],
+                ];
+            }
+        }
+
+        return $choices;
     }
 }
