@@ -153,7 +153,7 @@ class GameRoomControllerTest extends TestCase
         ])->assertUnprocessable()->assertJsonValidationErrors('move');
     }
 
-    public function test_timed_out_player_is_replaced_by_a_bot_that_makes_a_legal_move(): void
+    public function test_only_timed_out_player_gets_ten_second_warning_before_bot_takeover(): void
     {
         $players = User::factory()->guest()->count(3)->create();
         Sanctum::actingAs($players[0]);
@@ -164,7 +164,22 @@ class GameRoomControllerTest extends TestCase
         }
 
         $this->travel(31)->seconds();
+        Sanctum::actingAs($players[0]);
+        $warning = $this->getJson("/api/v1/rooms/{$roomCode}")
+            ->assertSuccessful()
+            ->assertJsonPath('data.forced_disconnect', false)
+            ->json('data.turn_timeout_remaining');
+        $this->assertGreaterThanOrEqual(8, $warning);
+        $this->assertLessThanOrEqual(10, $warning);
+
         Sanctum::actingAs($players[1]);
+        $this->getJson("/api/v1/rooms/{$roomCode}")
+            ->assertSuccessful()
+            ->assertJsonPath('data.turn_timeout_remaining', null)
+            ->assertJsonPath('data.forced_disconnect', false)
+            ->assertJsonPath('data.state.bot_seats', []);
+
+        $this->travel(10)->seconds();
         $response = $this->getJson("/api/v1/rooms/{$roomCode}")
             ->assertSuccessful()
             ->assertJsonPath('data.state.bot_seats.0', 1)
@@ -173,5 +188,10 @@ class GameRoomControllerTest extends TestCase
         $revealed = $response->json('data.state.revealed.0');
         $this->assertContains($revealed['source'], ['table', 'hand']);
         $this->assertSame(1, $response->json('data.state.turn_seat'));
+
+        Sanctum::actingAs($players[0]);
+        $this->getJson("/api/v1/rooms/{$roomCode}")
+            ->assertJsonPath('data.forced_disconnect', true)
+            ->assertJsonPath('data.turn_timeout_remaining', null);
     }
 }

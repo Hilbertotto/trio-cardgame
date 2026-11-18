@@ -50,6 +50,8 @@ class PlayGameRoomCardAction
             $state['revealed'][] = compact('source', 'ownerSeat', 'slot', 'value');
             $values = array_column($state['revealed'], 'value');
             $state['version'] = ((int) ($state['version'] ?? 0)) + 1;
+            // Minden szabályos lapválasztás újraindítja a játékos idejét.
+            $state['turn_started_at'] = now()->toIso8601String();
 
             if (count($values) > 1 && count(array_unique($values)) > 1) {
                 $state['message'] = 'Nem egyezik — 2 másodperc múlva a következő játékos jön.';
@@ -145,7 +147,8 @@ class PlayGameRoomCardAction
             $state['turn_started_at'] = now()->toIso8601String();
             return $state;
         }
-        if (CarbonImmutable::parse($startedAt)->addSeconds(30)->isFuture()) {
+        // 30 mp alapidő + 10 mp, csak az érintett kliensnek jelzett türelmi idő.
+        if (CarbonImmutable::parse($startedAt)->addSeconds(40)->isFuture()) {
             return $state;
         }
 
