@@ -41,6 +41,7 @@ class StartGameRoomAction
                 'resolve_at' => null,
                 'turn_started_at' => now()->toIso8601String(),
                 'bot_seats' => [],
+                'bot_next_action_at' => null,
                 'winner_seat' => null,
             ],
         ]);

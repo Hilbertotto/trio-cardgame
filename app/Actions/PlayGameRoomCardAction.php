@@ -125,6 +125,7 @@ class PlayGameRoomCardAction
         $state['resolve_at'] = null;
         $state['turn_seat'] = ((int) $state['turn_seat'] % count($state['hands'])) + 1;
         $state['turn_started_at'] = now()->toIso8601String();
+        $state['bot_next_action_at'] = now()->addSeconds(2)->toIso8601String();
         $state['message'] = 'A(z) '.$state['turn_seat'].'. játékos következik.';
         $state['version'] = ((int) ($state['version'] ?? 0)) + 1;
         return $state;
@@ -155,6 +156,7 @@ class PlayGameRoomCardAction
         $botSeats[] = $seat;
         sort($botSeats);
         $state['bot_seats'] = array_values(array_unique($botSeats));
+        $state['bot_next_action_at'] = now()->addSeconds(2)->toIso8601String();
         $state['message'] = "A(z) {$seat}. játékos ideje lejárt — a gép folytatja helyette.";
         $state['version'] = ((int) ($state['version'] ?? 0)) + 1;
 
@@ -180,6 +182,11 @@ class PlayGameRoomCardAction
             return $state;
         }
 
+        $nextActionAt = $state['bot_next_action_at'] ?? null;
+        if ($nextActionAt !== null && CarbonImmutable::parse($nextActionAt)->isFuture()) {
+            return $state;
+        }
+
         $choices = $this->availableChoices($state);
         if ($choices === []) {
             return $state;
@@ -195,6 +202,7 @@ class PlayGameRoomCardAction
             $state['hands'][$choice['ownerSeat'] - 1][$choice['slot']] = null;
         }
         $state['revealed'][] = $choice;
+        $state['bot_next_action_at'] = now()->addSeconds(2)->toIso8601String();
         $values = array_column($state['revealed'], 'value');
         $state['version'] = ((int) ($state['version'] ?? 0)) + 1;
 

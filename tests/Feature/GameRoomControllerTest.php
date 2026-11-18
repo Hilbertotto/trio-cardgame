@@ -183,6 +183,11 @@ class GameRoomControllerTest extends TestCase
         $response = $this->getJson("/api/v1/rooms/{$roomCode}")
             ->assertSuccessful()
             ->assertJsonPath('data.state.bot_seats.0', 1)
+            ->assertJsonCount(0, 'data.state.revealed');
+
+        $this->travel(2)->seconds();
+        $response = $this->getJson("/api/v1/rooms/{$roomCode}")
+            ->assertSuccessful()
             ->assertJsonCount(1, 'data.state.revealed');
 
         $revealed = $response->json('data.state.revealed.0');
