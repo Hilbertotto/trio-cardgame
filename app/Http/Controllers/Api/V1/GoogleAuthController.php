@@ -26,8 +26,14 @@ class GoogleAuthController extends Controller
             abort(503, 'A Google-belépés még nincs beállítva a szerveren.');
         }
 
-        $payload = (new GoogleClient(['client_id' => $clientId]))
-            ->verifyIdToken($validated['id_token']);
+        try {
+            $payload = (new GoogleClient(['client_id' => $clientId]))
+                ->verifyIdToken($validated['id_token']);
+        } catch (\Throwable) {
+            throw ValidationException::withMessages([
+                'id_token' => 'A Google-azonosítás érvénytelen vagy lejárt.',
+            ]);
+        }
 
         if (! is_array($payload)
             || empty($payload['sub'])
