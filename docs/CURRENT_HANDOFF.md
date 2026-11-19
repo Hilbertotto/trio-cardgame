@@ -112,3 +112,8 @@ olvassa el.
 - A kezdőképernyő mintaképéhez igazítva a gomb most csak az állapotnak megfelelő ikont mutatja, felirat nélkül.
 - A kezdőképernyő háttérképe és a be-/kijelentkezési gombok a kapott TRIO-grafikákra cserélve.
 - A kapott gombgrafika mérete nagyobb lett, hogy jobban illeszkedjen a kezdőképernyő arányaihoz.
+
+## Online köridő meghosszabbítása – 2026-11-19
+
+- A szerveres játék körideje 40 másodpercről 120 másodpercre nőtt (90 mp alapidő + 30 mp figyelmeztetési szakasz).
+- A kliens megszakítási üzenete ehhez a 30 másodperces türelmi időhöz igazodott.

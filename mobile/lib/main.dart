@@ -327,7 +327,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
         builder: (_) => AlertDialog(
           title: const Text('A kapcsolat megszakadt'),
           content: const Text(
-            'Nem választottál a 10 másodperces türelmi idő alatt, ezért a helyedet egy gépi játékos vette át.',
+            'Nem választottál a 30 másodperces türelmi idő alatt, ezért a helyedet egy gépi játékos vette át.',
           ),
           actions: [
             TextButton(

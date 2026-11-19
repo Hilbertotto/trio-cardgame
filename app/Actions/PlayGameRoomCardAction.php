@@ -148,8 +148,8 @@ class PlayGameRoomCardAction
             $state['turn_started_at'] = now()->toIso8601String();
             return $state;
         }
-        // 30 mp alapidő + 10 mp, csak az érintett kliensnek jelzett türelmi idő.
-        if (CarbonImmutable::parse($startedAt)->addSeconds(40)->isFuture()) {
+        // 90 mp alapidő + 30 mp türelmi idő, csak az érintett kliensnek jelzett.
+        if (CarbonImmutable::parse($startedAt)->addSeconds(120)->isFuture()) {
             return $state;
         }
 

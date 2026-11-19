@@ -24,8 +24,8 @@ class GameRoomResource extends JsonResource
         $timeoutRemaining = null;
         if ($isMyTurn && ! in_array($mySeat, $botSeats, true) && ! empty($state['turn_started_at'])) {
             $startedAt = CarbonImmutable::parse($state['turn_started_at']);
-            $warningAt = $startedAt->addSeconds(30);
-            $disconnectAt = $startedAt->addSeconds(40);
+            $warningAt = $startedAt->addSeconds(90);
+            $disconnectAt = $startedAt->addSeconds(120);
             if (now()->greaterThanOrEqualTo($warningAt) && now()->lessThan($disconnectAt)) {
                 $timeoutRemaining = max(1, $disconnectAt->getTimestamp() - now()->getTimestamp());
             }
