@@ -1749,8 +1749,8 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   );
 
   Widget trioCounter(int amount) => SizedBox(
-    width: 58,
-    height: 70,
+    width: 72,
+    height: 86,
     child: Image.asset(
       'assets/avatars/trio_count_${amount.clamp(0, 3)}.png',
       fit: BoxFit.contain,
@@ -1815,7 +1815,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             fit: BoxFit.contain,
           ),
         ),
-        Positioned(left: -8, top: 28, child: trioCounter(ps[p].trios.length)),
+        Positioned(left: -18, top: 20, child: trioCounter(ps[p].trios.length)),
         Align(
           alignment: const Alignment(0, .46),
           child: FractionallySizedBox(
@@ -2125,7 +2125,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                     fit: BoxFit.contain,
                   ),
                 ),
-                Positioned(left: -8, top: 28, child: trioCounter(ps[0].trios.length)),
+                Positioned(left: -18, top: 20, child: trioCounter(ps[0].trios.length)),
                 Align(
                   alignment: const Alignment(0, .46),
                   child: FractionallySizedBox(

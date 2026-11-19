@@ -92,3 +92,4 @@ olvassa el.
 
 - A TRIO-számláló kártyapakli az avatar bal oldalára került, a gépes referenciaelrendezéshez igazítva.
 - A számláló most külön 0, 1, 2 és 3 értékű TRIO-kártyaképeket használ, nem ráírt szöveget.
+- A triószámláló paklikártyája nagyobb lett (72×86), és kijjebb került az avatar bal oldalán.
