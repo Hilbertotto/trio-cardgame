@@ -1828,7 +1828,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             fit: BoxFit.contain,
           ),
         ),
-        Positioned(right: -4, top: 8, child: trioCounter(ps[p].trios.length)),
+        Positioned(left: -8, top: 28, child: trioCounter(ps[p].trios.length)),
         Align(
           alignment: const Alignment(0, .46),
           child: FractionallySizedBox(
@@ -2138,7 +2138,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                     fit: BoxFit.contain,
                   ),
                 ),
-                Positioned(right: -4, top: 8, child: trioCounter(ps[0].trios.length)),
+                Positioned(left: -8, top: 28, child: trioCounter(ps[0].trios.length)),
                 Align(
                   alignment: const Alignment(0, .46),
                   child: FractionallySizedBox(

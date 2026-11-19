@@ -87,3 +87,7 @@ olvassa el.
 - A kártya közepén játék közben látszik az adott játékos által megszerzett triók száma.
 - Helyi és szerveres játékban is a játékállapotból frissül.
 - Flutter tesztek: 3/3 sikeres; Android debug APK build sikeres.
+
+## TRIO-kártya elhelyezése – 2026-11-19
+
+- A TRIO-számláló kártyapakli az avatar bal oldalára került, a gépes referenciaelrendezéshez igazítva.
