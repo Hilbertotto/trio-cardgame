@@ -123,3 +123,4 @@ olvassa el.
 - Az Apache naplóban `Target class [view] does not exist` hiba jelent meg.
 - A `ViewServiceProvider` regisztrálva lett, és létrejött a hiányzó `config/view.php`.
 - Szerveren frissítés után `composer dump-autoload` és `php artisan optimize:clear` szükséges.
+- A friss log megmutatta a `Route [login] not defined` hibát; az API vendégkérései most nem irányulnak webes login route-ra.
