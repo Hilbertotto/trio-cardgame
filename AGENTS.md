@@ -35,3 +35,20 @@ Titoknak tűnő adatot push előtt ellenőrizz. Ne cseréld le a package ID-t
 Jelentős funkció, architekturális döntés, telepítési változás vagy ismert
 hiba után frissítsd a `docs/PROJECT_CONTEXT.md` dokumentumot. Ez adja át a
 kontextust a következő gépen dolgozó Codexnek.
+
+Minden fejlesztési menet végén frissítsd a `docs/CURRENT_HANDOFF.md` fájlt is:
+
+- mi készült el az adott menetben;
+- milyen tesztek futottak le;
+- mi a következő konkrét feladat;
+- van-e ismert hiba vagy blokkoló körülmény.
+
+Ezután futtasd Windows alatt:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\sync-context.ps1
+```
+
+Ha a Google Drive `G:` meghajtó elérhető, a szkript a projektmemóriát a
+`G:\Saját meghajtó\applikacio\trio\context` mappába is elmenti. A kontextusfájlokat
+commitold és pushold is, hogy a Drive nélküli gépek is megkapják.
