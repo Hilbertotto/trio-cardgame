@@ -117,3 +117,9 @@ olvassa el.
 
 - A szerveres játék körideje 40 másodpercről 120 másodpercre nőtt (90 mp alapidő + 30 mp figyelmeztetési szakasz).
 - A kliens megszakítási üzenete ehhez a 30 másodperces türelmi időhöz igazodott.
+
+## Laravel API 500 javítása – 2026-11-19
+
+- Az Apache naplóban `Target class [view] does not exist` hiba jelent meg.
+- A `ViewServiceProvider` regisztrálva lett, és létrejött a hiányzó `config/view.php`.
+- Szerveren frissítés után `composer dump-autoload` és `php artisan optimize:clear` szükséges.
