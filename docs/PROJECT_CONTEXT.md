@@ -12,7 +12,7 @@ Működjön helyi gépi ellenfelekkel és internetes többjátékos módban.
 - Mobil: Flutter/Dart, Android, álló nézet
 - Android package ID: `hu.triogame.trio_android`
 - Mobil verzió a dokumentum készítésekor: `1.0.2+3`
-- Backend: Laravel API, Sanctum tokenek, PostgreSQL éles környezetben
+- Backend: Laravel API, Sanctum tokenek, MySQL a SolarisMiner éles környezetében
 - Éles API: `https://trio.solarisminer.com/api/v1`
 - Forrás: `https://github.com/Hilbertotto/trio-cardgame`
 - Szerver: saját Ubuntu gép, belső IP `192.168.0.214`, külső SSH `solarisminer.com:8022`
@@ -48,7 +48,7 @@ Működjön helyi gépi ellenfelekkel és internetes többjátékos módban.
 - Szobalétrehozás, szobakódos belépés és automatikus matchmaking.
 - Új keresés nem használhat lezárt szobát vagy bot által átvett játékoshelyet.
 - Szerver által kezelt játékállapot és lépések.
-- Inaktivitás: 30 másodperc után csak az érintett kliens kap 10 másodperces visszaszámlálást; utána bot veszi át a helyét.
+- Inaktivitás: 90 másodperc alapidő után 30 másodperces figyelmeztetés; összesen 120 másodperc után bot veszi át a helyet.
 - A szerveres botlépések szándékosan lassítottak.
 - Pontozás: befejezett játék 20 pont, győztes bónusz 100 pont.
 

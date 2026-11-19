@@ -131,3 +131,10 @@ olvassa el.
 - Javítás: csak várakozó/aktív, győztes nélküli szoba és emberi játékoshely használható újra. Lezárt játék résztvevőit megőrizzük.
 - Laravel teszt blokkolva: helyi PHP 8.2.12, szükséges >=8.3. Szerveren php artisan test futtatandó.
 - Következő lépés: szerver frissítése és új véletlen keresés ellenőrzése.
+- A felhasználó igazolta a 3edead8 éles letöltését. Három emulátor fut, TRIO megnyitva; a teljes új online játék még ellenőrizendő.
+
+## Drive-mentés és részletes átadás
+
+- Részletes leírás: docs/BACKUP_HANDOFF_2026-11-19.md; környezet, javítások, jogosultságok, tesztek és visszaállítási korlátok.
+- Dátumozott forrás ZIP, release teszt APK és kontextusmásolat készül a Drive applikacio/trio/backups mappájába, SHA256 ellenőrzéssel.
+- Ez forrás- és kliensmentés; éles adatbázist és titkokat nem tartalmaz. Új build/játékteszt a mentési menetben nem futott.
