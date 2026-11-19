@@ -107,6 +107,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   String? networkRoomCode;
   Timer? networkTimer;
   int? turnTimeoutRemaining;
+  int? coins;
   List<int> networkSeats = [];
   bool networkSyncing = false;
   List<P> ps = [];
@@ -205,9 +206,18 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     });
   }
 
+  Future<void> refreshOnlineProfile() async {
+    if (!api.isAuthenticated) return;
+    try {
+      await api.refreshProfile();
+      if (mounted) setState(() => coins = api.coins);
+    } catch (_) {}
+  }
+
   void applyNetworkRoom(TrioRoom room) {
     final state = room.gameState;
     if (!mounted || state == null || room.mySeat < 1) return;
+    final wasGameOver = gameOver;
     final allSeats = room.seats.isNotEmpty
         ? room.seats
         : [for (int i = 1; i <= room.playerCount; i++) i];
@@ -279,6 +289,9 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
       boardReady = true;
       turnTimeoutRemaining = room.turnTimeoutRemaining;
     });
+    if (!wasGameOver && gameOver) {
+      Future<void>.microtask(refreshOnlineProfile);
+    }
   }
 
   R networkReveal(Map<String, dynamic> card) {
@@ -781,6 +794,23 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
+                    if (serverMode && coins != null)
+                      Positioned(
+                        left: panel.maxWidth * .18,
+                        right: panel.maxWidth * .18,
+                        top: panel.maxHeight * .53,
+                        height: panel.maxHeight * .055,
+                        child: Center(
+                          child: Text(
+                            'Érmeegyenleg: $coins',
+                            style: TextStyle(
+                              color: const Color(0xff003d39),
+                              fontSize: panel.maxWidth * .032,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                      ),
                     Positioned(
                       left: panel.maxWidth * .28,
                       right: panel.maxWidth * .28,
@@ -1186,6 +1216,9 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                                     );
                                   }
                                   await api.createGoogleSession(idToken);
+                                  if (mounted) {
+                                    setState(() => coins = api.coins);
+                                  }
                                   googleAccount = account;
                                   if (dialogContext.mounted) {
                                     Navigator.pop(dialogContext, true);

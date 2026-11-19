@@ -99,6 +99,7 @@ class TrioApi {
   final http.Client _client;
   String? _token;
   int? playerId;
+  int? coins;
 
   bool get isAuthenticated => _token != null;
 
@@ -116,6 +117,7 @@ class TrioApi {
     if (player is Map<String, dynamic>) {
       final data = _resource(player);
       playerId = (data['id'] as num?)?.toInt();
+      coins = (data['coins'] as num?)?.toInt();
     }
     if (_token == null || _token!.isEmpty) {
       throw const TrioApiException('A szerver nem adott belépési tokent.');
@@ -136,6 +138,7 @@ class TrioApi {
     if (player is Map<String, dynamic>) {
       final data = _resource(player);
       playerId = (data['id'] as num?)?.toInt();
+      coins = (data['coins'] as num?)?.toInt();
     }
     if (_token == null || _token!.isEmpty) {
       throw const TrioApiException('A szerver nem adott belépési tokent.');
@@ -173,6 +176,14 @@ class TrioApi {
         .delete(Uri.parse('$baseUrl/rooms/$code'), headers: _headers)
         .timeout(const Duration(seconds: 15));
     if (response.statusCode != 204) _decode(response);
+  }
+
+  Future<void> refreshProfile() async {
+    final response = await _client
+        .get(Uri.parse('$baseUrl/profile'), headers: _headers)
+        .timeout(const Duration(seconds: 15));
+    final data = _resource(_decode(response));
+    coins = (data['coins'] as num?)?.toInt() ?? coins;
   }
 
   Future<TrioRoom> playCard(

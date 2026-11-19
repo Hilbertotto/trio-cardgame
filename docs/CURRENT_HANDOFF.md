@@ -59,3 +59,11 @@ olvassa el.
 - A lezárt mérkőzés jutalmazását a játékterem API automatikusan meghívja, és ismételt lekérésre sem duplázza.
 - A Laravel tesztek ezen a gépen nem futtathatók, mert a telepített PHP 8.2.12, a projekt PHP 8.3-at igényel. Az érintett PHP-fájlok szintaktikai ellenőrzése sikeres.
 - Következő feladat: jutalomcsomag visszaadása az API-ban, majd napi küldetések és rangpont-statisztikák.
+
+## Android érmék megjelenítése – 2026-11-19
+
+- A Flutter kliens belépés után átveszi a szerver által visszaadott `coins` egyenleget.
+- A lezárt online játék eredménypanelén megjelenik az aktuális „Érmeegyenleg”.
+- A profil újratöltése csak akkor történik meg, amikor a játék először lezárul, ezért az ismételt polling nem indít felesleges kéréseket.
+- Flutter tesztek: 3/3 sikeres. Debug APK elkészült.
+- A teszt APK Drive-másolata: `G:\Saját meghajtó\apllikacio\trio-cardgame-test.apk`.
