@@ -111,6 +111,16 @@ class TrioApi {
     coins = prefs.getInt('trio.auth.coins');
   }
 
+  Future<void> clearSession() async {
+    _token = null;
+    playerId = null;
+    coins = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('trio.auth.token');
+    await prefs.remove('trio.auth.player_id');
+    await prefs.remove('trio.auth.coins');
+  }
+
   Future<void> _persistSession() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('trio.auth.token', _token!);

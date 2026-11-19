@@ -1079,9 +1079,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             label: 'Játék indítása',
             child: InkWell(
               onTap: () async {
-                if (api.isAuthenticated || await showGoogleLogin()) {
-                  if (mounted) setState(() => showGameOptions = true);
-                }
+                if (mounted) setState(() => showGameOptions = true);
               },
             ),
           ),
@@ -1098,14 +1096,53 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           ),
         ),
         Positioned(
-          left: 45,
-          right: 45,
-          top: MediaQuery.sizeOf(context).height * .78,
-          height: MediaQuery.sizeOf(context).height * .12,
+          left: MediaQuery.sizeOf(context).width * .12,
+          right: MediaQuery.sizeOf(context).width * .12,
+          top: MediaQuery.sizeOf(context).height * .785,
+          height: MediaQuery.sizeOf(context).height * .065,
           child: Semantics(
             button: true,
-            label: 'Vendégként játszom',
-            child: InkWell(onTap: () => setState(() => showGameOptions = true)),
+            label: api.isAuthenticated ? 'Kijelentkezés' : 'Bejelentkezés',
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(40),
+                onTap: () async {
+                  if (api.isAuthenticated) {
+                    await api.clearSession();
+                    googleAccount = null;
+                    if (mounted) setState(() => coins = null);
+                  } else if (await showGoogleLogin()) {
+                    if (mounted) setState(() => coins = api.coins);
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xff07534d),
+                    borderRadius: BorderRadius.circular(40),
+                    border: Border.all(color: const Color(0xff8ff1d7), width: 3),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        api.isAuthenticated ? Icons.logout : Icons.person,
+                        color: const Color(0xfffff0c7),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        api.isAuthenticated ? 'Kijelentkezés' : 'Bejelentkezés',
+                        style: const TextStyle(
+                          color: Color(0xfffff0c7),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ] else

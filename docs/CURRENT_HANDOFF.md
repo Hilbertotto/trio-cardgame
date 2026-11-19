@@ -99,3 +99,10 @@ olvassa el.
 - A kezdőképernyő alsó Játékszabály gombja most kattintható.
 - Türkiz–sárga, TRIO-stílusú modal készült saját `cards_new` kártyaképekkel és a játék rövid szabályaival.
 - Flutter tesztek: 3/3 sikeres; release APK build sikeres.
+
+## Dinamikus bejelentkezés/kijelentkezés – 2026-11-19
+
+- A kezdőképernyő statikus bejelentkezési feliratát lefedő, egységes dinamikus gomb készült.
+- Kijelentkezve „Bejelentkezés”, mentett munkamenetnél „Kijelentkezés” látszik.
+- A sima „Játék indítása” nem kér belépést; hitelesítés csak szerveres játékhoz szükséges.
+- Kijelentkezéskor törlődik a helyben mentett token, játékosazonosító és érmeegyenleg.

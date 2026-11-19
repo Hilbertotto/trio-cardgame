@@ -14,6 +14,6 @@ void main() {
   testWidgets('TRIO kezdőképernyő megjelenik', (tester) async {
     await tester.pumpWidget(const TrioApp());
     expect(find.bySemanticsLabel('Játék indítása'), findsOneWidget);
-    expect(find.bySemanticsLabel('Vendégként játszom'), findsOneWidget);
+    expect(find.text('Bejelentkezés'), findsOneWidget);
   });
 }
