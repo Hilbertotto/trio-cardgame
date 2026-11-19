@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TrioApiException implements Exception {
   const TrioApiException(this.message);
@@ -103,6 +104,20 @@ class TrioApi {
 
   bool get isAuthenticated => _token != null;
 
+  Future<void> restoreSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('trio.auth.token');
+    playerId = prefs.getInt('trio.auth.player_id');
+    coins = prefs.getInt('trio.auth.coins');
+  }
+
+  Future<void> _persistSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('trio.auth.token', _token!);
+    if (playerId != null) await prefs.setInt('trio.auth.player_id', playerId!);
+    if (coins != null) await prefs.setInt('trio.auth.coins', coins!);
+  }
+
   Future<void> createGoogleSession(String idToken) async {
     final response = await _client
         .post(
@@ -122,6 +137,7 @@ class TrioApi {
     if (_token == null || _token!.isEmpty) {
       throw const TrioApiException('A szerver nem adott belépési tokent.');
     }
+    await _persistSession();
   }
 
   Future<void> createGuest(String name) async {
@@ -143,6 +159,7 @@ class TrioApi {
     if (_token == null || _token!.isEmpty) {
       throw const TrioApiException('A szerver nem adott belépési tokent.');
     }
+    await _persistSession();
   }
 
   Future<TrioRoom> createRoom(int playerCount) async {
@@ -184,6 +201,26 @@ class TrioApi {
         .timeout(const Duration(seconds: 15));
     final data = _resource(_decode(response));
     coins = (data['coins'] as num?)?.toInt() ?? coins;
+    if (_token != null) await _persistSession();
+  }
+
+  Future<void> submitOfflineResult({
+    required int playerCount,
+    required bool won,
+    required String gameId,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl/offline-results'),
+      headers: _headers,
+      body: jsonEncode({
+        'player_count': playerCount,
+        'won': won,
+        'game_id': gameId,
+      }),
+    ).timeout(const Duration(seconds: 15));
+    final data = _resource(_decode(response));
+    coins = (data['coins'] as num?)?.toInt() ?? coins;
+    await _persistSession();
   }
 
   Future<TrioRoom> playCard(

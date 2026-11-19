@@ -108,6 +108,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   Timer? networkTimer;
   int? turnTimeoutRemaining;
   int? coins;
+  String? localGameId;
   List<int> networkSeats = [];
   bool networkSyncing = false;
   List<P> ps = [];
@@ -181,6 +182,14 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
         .toList();
     final pool = unknown.isNotEmpty ? unknown : candidates;
     return pool[random.nextInt(pool.length)];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    api.restoreSession().then((_) {
+      if (mounted) setState(() => coins = api.coins);
+    });
   }
 
   @override
@@ -487,6 +496,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     botMemory.clear();
     botMemoryTurn.clear();
     turnSerial = 0;
+    localGameId = '${DateTime.now().microsecondsSinceEpoch}-${random.nextInt(1 << 32)}';
     avatarIds = [for (int i = 1; i <= 40; i++) i]..shuffle(random);
     final deck = <int>[
       for (int n = 1; n <= 12; n++) ...<int>[n, n, n],
@@ -622,6 +632,21 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           winner = ps[turn].name;
           busy = true;
         });
+        if (!serverMode && turn == 0 && api.isAuthenticated) {
+          final gameId = localGameId;
+          if (gameId != null) {
+            Future<void>.microtask(() async {
+              try {
+                await api.submitOfflineResult(
+                  playerCount: count,
+                  won: true,
+                  gameId: gameId,
+                );
+                if (mounted) setState(() => coins = api.coins);
+              } catch (_) {}
+            });
+          }
+        }
         return;
       }
       next();
@@ -940,7 +965,13 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           child: Semantics(
             button: true,
             label: 'Játék indítása',
-            child: InkWell(onTap: () => setState(() => showGameOptions = true)),
+            child: InkWell(
+              onTap: () async {
+                if (api.isAuthenticated || await showGoogleLogin()) {
+                  if (mounted) setState(() => showGameOptions = true);
+                }
+              },
+            ),
           ),
         ),
         Positioned(

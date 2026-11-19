@@ -67,3 +67,10 @@ olvassa el.
 - A profil újratöltése csak akkor történik meg, amikor a játék először lezárul, ezért az ismételt polling nem indít felesleges kéréseket.
 - Flutter tesztek: 3/3 sikeres. Debug APK elkészült.
 - A teszt APK Drive-másolata: `G:\Saját meghajtó\apllikacio\trio-cardgame-test.apk`.
+
+## Gép elleni játék és megjegyzett belépés – 2026-11-19
+
+- A bejelentkezési gomb most Google-belépést indít; sikeres belépés után a játékos a játékbeállításokhoz jut.
+- A Sanctum token és az alap játékosadatok helyben megmaradnak, ezért az alkalmazás újraindítása után nem kell ismét belépni.
+- Bejelentkezett játékos gép elleni győzelme külön hitelesített API-végponton kerül pontozásra, ismétlés ellen egyedi játékazonosító véd.
+- Az új debug APK ismét a `G:\Saját meghajtó\apllikacio\trio-cardgame-test.apk` fájlban van.
