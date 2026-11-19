@@ -106,3 +106,7 @@ olvassa el.
 - Kijelentkezve „Bejelentkezés”, mentett munkamenetnél „Kijelentkezés” látszik.
 - A sima „Játék indítása” nem kér belépést; hitelesítés csak szerveres játékhoz szükséges.
 - Kijelentkezéskor törlődik a helyben mentett token, játékosazonosító és érmeegyenleg.
+
+## Ikonos bejelentkezési gomb – 2026-11-19
+
+- A kezdőképernyő mintaképéhez igazítva a gomb most csak az állapotnak megfelelő ikont mutatja, felirat nélkül.

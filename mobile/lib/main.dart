@@ -1128,15 +1128,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                       Icon(
                         api.isAuthenticated ? Icons.logout : Icons.person,
                         color: const Color(0xfffff0c7),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        api.isAuthenticated ? 'Kijelentkezés' : 'Bejelentkezés',
-                        style: const TextStyle(
-                          color: Color(0xfffff0c7),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        size: 26,
                       ),
                     ],
                   ),
