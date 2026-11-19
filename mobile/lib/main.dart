@@ -1751,22 +1751,9 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   Widget trioCounter(int amount) => SizedBox(
     width: 58,
     height: 70,
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        Image.asset('assets/avatars/trio_counter.png', fit: BoxFit.contain),
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: Text(
-            amount.toString(),
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-      ],
+    child: Image.asset(
+      'assets/avatars/trio_count_${amount.clamp(0, 3)}.png',
+      fit: BoxFit.contain,
     ),
   );
 

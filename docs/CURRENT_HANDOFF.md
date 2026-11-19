@@ -91,3 +91,4 @@ olvassa el.
 ## TRIO-kártya elhelyezése – 2026-11-19
 
 - A TRIO-számláló kártyapakli az avatar bal oldalára került, a gépes referenciaelrendezéshez igazítva.
+- A számláló most külön 0, 1, 2 és 3 értékű TRIO-kártyaképeket használ, nem ráírt szöveget.
