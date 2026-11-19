@@ -80,3 +80,10 @@ olvassa el.
 - A Google OAuth Web Client ID eltért az OAuth-fájlban és a szerveren használt azonosítótól.
 - Az app alapértelmezett Client ID-ja és a SolarisMiner `.env` értéke egységesítve lett.
 - A Laravel konfigurációs cache frissítve lett; új mobil APK készítése szükséges.
+
+## TRIO-számláló az avatarok mellett – 2026-11-19
+
+- A kapott TRIO-kártyagrafika bekerült az avatarok mellé.
+- A kártya közepén játék közben látszik az adott játékos által megszerzett triók száma.
+- Helyi és szerveres játékban is a játékállapotból frissül.
+- Flutter tesztek: 3/3 sikeres; Android debug APK build sikeres.
