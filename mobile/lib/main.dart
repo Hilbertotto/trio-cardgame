@@ -84,7 +84,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   static const googleWebClientId = String.fromEnvironment(
     'GOOGLE_WEB_CLIENT_ID',
     defaultValue:
-        '1075466467650-geobj7gpcmglmqbdoag7prghdeinf8mq.apps.googleusercontent.com',
+        '1075466467650-a5gtnk4rmbnb76ao6qjtc1oioa00fbjm.apps.googleusercontent.com',
   );
   bool googleSignInInitialized = false;
   GoogleSignInAccount? googleAccount;
@@ -1748,6 +1748,28 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     ),
   );
 
+  Widget trioCounter(int amount) => SizedBox(
+    width: 58,
+    height: 70,
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        Image.asset('assets/avatars/trio_counter.png', fit: BoxFit.contain),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            amount.toString(),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
   Widget activeTurnMarker({required bool me}) => Positioned(
     left: 20,
     right: 20,
@@ -1806,6 +1828,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             fit: BoxFit.contain,
           ),
         ),
+        Positioned(right: -4, top: 8, child: trioCounter(ps[p].trios.length)),
         Align(
           alignment: const Alignment(0, .46),
           child: FractionallySizedBox(
@@ -2115,6 +2138,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                     fit: BoxFit.contain,
                   ),
                 ),
+                Positioned(right: -4, top: 8, child: trioCounter(ps[0].trios.length)),
                 Align(
                   alignment: const Alignment(0, .46),
                   child: FractionallySizedBox(
