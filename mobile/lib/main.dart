@@ -919,6 +919,118 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     body: SizedBox.expand(child: playing ? board() : setup()),
   );
 
+  Future<void> showRulesModal() async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        backgroundColor: const Color(0xff07534d),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(26),
+          side: const BorderSide(color: Color(0xff8ff1d7), width: 3),
+        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420, maxHeight: 680),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(22, 18, 22, 14),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'JÁTÉKSZABÁLY',
+                        style: TextStyle(
+                          color: Color(0xffffd33f),
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      icon: const Icon(Icons.close, color: Color(0xfffff0c7)),
+                    ),
+                  ],
+                ),
+                const Divider(color: Color(0xff38d8c0)),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'A cél',
+                          style: TextStyle(
+                            color: Color(0xffffd33f),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Gyűjts össze három egyforma értékű lapot, és szerezz TRIO-t. A 7-es TRIO azonnal megnyeri a partit.',
+                          style: TextStyle(color: Color(0xfffff0c7), height: 1.35),
+                        ),
+                        const SizedBox(height: 14),
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              for (final value in [1, 2, 7])
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                                  child: SizedBox(
+                                    width: 62,
+                                    height: 84,
+                                    child: face(value, w: 62),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _ruleStep('1', 'A körödben válaszd az asztal vagy egy játékos szélső lapját.'),
+                        _ruleStep('2', 'A Lo a legalacsonyabb, a Hi a legmagasabb elérhető lap.'),
+                        _ruleStep('3', 'Fordíts fel legfeljebb három lapot. Ha mindhárom azonos, TRIO-t szereztél.'),
+                        _ruleStep('4', 'Három megszerzett TRIO vagy egy 7-es TRIO győzelmet jelent.'),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Játékosok',
+                          style: TextStyle(color: Color(0xffffd33f), fontSize: 18, fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Helyben 3–6 játékos játszhat gépi ellenfelekkel. Szerveres módban szobakóddal vagy matchmakinggel csatlakozhattok.',
+                          style: TextStyle(color: Color(0xfffff0c7), height: 1.35),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _ruleStep(String number, String text) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 14,
+          backgroundColor: const Color(0xffffd33f),
+          child: Text(number, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900)),
+        ),
+        const SizedBox(width: 10),
+        Expanded(child: Text(text, style: const TextStyle(color: Color(0xfffff0c7), height: 1.3))),
+      ],
+    ),
+  );
+
   Widget designPanel({required bool game}) => LayoutBuilder(
     builder: (context, constraints) {
       if (game) {
@@ -972,6 +1084,17 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                 }
               },
             ),
+          ),
+        ),
+        Positioned(
+          left: MediaQuery.sizeOf(context).width * .50,
+          right: MediaQuery.sizeOf(context).width * .04,
+          bottom: MediaQuery.sizeOf(context).height * .035,
+          height: MediaQuery.sizeOf(context).height * .085,
+          child: Semantics(
+            button: true,
+            label: 'Játékszabály',
+            child: InkWell(onTap: showRulesModal),
           ),
         ),
         Positioned(

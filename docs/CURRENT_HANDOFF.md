@@ -93,3 +93,9 @@ olvassa el.
 - A TRIO-számláló kártyapakli az avatar bal oldalára került, a gépes referenciaelrendezéshez igazítva.
 - A számláló most külön 0, 1, 2 és 3 értékű TRIO-kártyaképeket használ, nem ráírt szöveget.
 - A triószámláló paklikártyája nagyobb lett (72×86), és kijjebb került az avatar bal oldalán.
+
+## Játékszabály modal – 2026-11-19
+
+- A kezdőképernyő alsó Játékszabály gombja most kattintható.
+- Türkiz–sárga, TRIO-stílusú modal készült saját `cards_new` kártyaképekkel és a játék rövid szabályaival.
+- Flutter tesztek: 3/3 sikeres; release APK build sikeres.
