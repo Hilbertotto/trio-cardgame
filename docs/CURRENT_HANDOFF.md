@@ -50,3 +50,12 @@ olvassa el.
 
 - Felhasználói előírás ezen a gépen: szerverelérés kizárólag solarisminer.com domainen, SSH 8022 porton. Az Android API továbbra is https://trio.solarisminer.com/api/v1.
 - Android debug build sikeres, 1.0.2+3. Az APK telepítése sikeres. A korábbi Pixel_7 feloldatlan Android-felhasználója miatt külön TRIO_Test emulátor készült a meglévő Android 35 rendszerképből. Ezen az alkalmazás telepítése és indítása sikeres, a MainActivity előtérben van (adb ResumedActivity). Az ablak képrögzítése időtúllépést adott, vizuális ellenőrzés nem történt.
+
+## Jutalmazási rendszer első mérföldköve – 2026-11-19
+
+- A felhasználókhoz virtuális érmeegyenleg és külön `coin_transactions` napló került.
+- A győztes 3, 4, 5 és 6 fős szobában rendre 100, 120, 140 vagy 160 érmét kap.
+- A meglévő rangpont-elszámolás megmaradt.
+- A lezárt mérkőzés jutalmazását a játékterem API automatikusan meghívja, és ismételt lekérésre sem duplázza.
+- A Laravel tesztek ezen a gépen nem futtathatók, mert a telepített PHP 8.2.12, a projekt PHP 8.3-at igényel. Az érintett PHP-fájlok szintaktikai ellenőrzése sikeres.
+- Következő feladat: jutalomcsomag visszaadása az API-ban, majd napi küldetések és rangpont-statisztikák.

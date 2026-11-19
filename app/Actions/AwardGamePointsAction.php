@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Models\GameRoom;
+use App\Models\CoinTransaction;
 use App\Models\PointTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,8 @@ class AwardGamePointsAction
                 amount: config('trio.points.winner_bonus'),
             );
 
+            $this->creditCoinsOnce($winner, $lockedRoom);
+
             $lockedRoom->update([
                 'status' => 'finished',
                 'finished_at' => $lockedRoom->finished_at ?? now(),
@@ -43,6 +46,24 @@ class AwardGamePointsAction
 
             return $lockedRoom->load('players');
         });
+    }
+
+    private function creditCoinsOnce(User $user, GameRoom $gameRoom): void
+    {
+        $type = 'winner_reward';
+        if (CoinTransaction::query()->whereBelongsTo($user)->whereBelongsTo($gameRoom)->where('type', $type)->exists()) return;
+
+        $lockedUser = User::query()->lockForUpdate()->findOrFail($user->id);
+        $amount = (int) (config('trio.coins.winner.'.$gameRoom->player_count) ?? 0);
+        $lockedUser->increment('coins', $amount);
+        $lockedUser->refresh();
+        $lockedUser->coinTransactions()->create([
+            'game_room_id' => $gameRoom->id,
+            'type' => $type,
+            'amount' => $amount,
+            'balance_after' => $lockedUser->coins,
+            'metadata' => ['player_count' => $gameRoom->player_count],
+        ]);
     }
 
     private function creditOnce(User $user, GameRoom $gameRoom, string $type, int $amount): void

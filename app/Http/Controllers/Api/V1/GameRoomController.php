@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\CreateGameRoomAction;
+use App\Actions\AwardGamePointsAction;
 use App\Actions\JoinGameRoomAction;
 use App\Actions\PlayGameRoomCardAction;
 use App\Http\Controllers\Controller;
@@ -22,7 +23,7 @@ class GameRoomController extends Controller
         return new GameRoomResource($room);
     }
 
-    public function show(Request $request, string $code, PlayGameRoomCardAction $play): GameRoomResource
+    public function show(Request $request, string $code, PlayGameRoomCardAction $play, AwardGamePointsAction $award): GameRoomResource
     {
         $room = GameRoom::query()
             ->where('code', mb_strtoupper($code))
@@ -30,7 +31,7 @@ class GameRoomController extends Controller
             ->with('players')
             ->firstOrFail();
 
-        return new GameRoomResource($play->refresh($room));
+        return new GameRoomResource($this->settleIfFinished($play->refresh($room), $award));
     }
 
     public function join(Request $request, string $code, JoinGameRoomAction $action): GameRoomResource
@@ -68,7 +69,7 @@ class GameRoomController extends Controller
         return response()->noContent();
     }
 
-    public function play(Request $request, string $code, PlayGameRoomCardAction $action): GameRoomResource
+    public function play(Request $request, string $code, PlayGameRoomCardAction $action, AwardGamePointsAction $award): GameRoomResource
     {
         $validated = $request->validate([
             'source' => ['required', 'in:table,hand'],
@@ -80,6 +81,16 @@ class GameRoomController extends Controller
             ->whereHas('players', fn ($query) => $query->whereKey($request->user()->id))
             ->firstOrFail();
 
-        return new GameRoomResource($action->handle($room, $request->user(), $validated));
+        return new GameRoomResource($this->settleIfFinished($action->handle($room, $request->user(), $validated), $award));
+    }
+
+    private function settleIfFinished(GameRoom $room, AwardGamePointsAction $award): GameRoom
+    {
+        if ($room->status !== 'finished' || empty($room->state['winner_seat'])) {
+            return $room;
+        }
+
+        $winner = $room->players->first(fn ($player): bool => (int) $player->pivot->seat === (int) $room->state['winner_seat']);
+        return $winner === null ? $room : $award->handle($room, $winner);
     }
 }

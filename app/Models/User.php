@@ -32,6 +32,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_guest' => 'boolean',
             'points' => 'integer',
+            'coins' => 'integer',
             'avatar_id' => 'integer',
         ];
     }
@@ -46,5 +47,10 @@ class User extends Authenticatable
     public function pointTransactions(): HasMany
     {
         return $this->hasMany(PointTransaction::class);
+    }
+
+    public function coinTransactions(): HasMany
+    {
+        return $this->hasMany(CoinTransaction::class);
     }
 }

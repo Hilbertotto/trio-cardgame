@@ -19,6 +19,13 @@ class AwardGamePointsActionTest extends TestCase
         app(AwardGamePointsAction::class)->handle($room, $winner);
 
         $this->assertSame(120, $winner->fresh()->points);
+        $this->assertSame(100, $winner->fresh()->coins);
+        $this->assertDatabaseHas('coin_transactions', [
+            'user_id' => $winner->id,
+            'game_room_id' => $room->id,
+            'type' => 'winner_reward',
+            'amount' => 100,
+        ]);
         $this->assertSame(20, $otherPlayer->fresh()->points);
         $this->assertDatabaseCount('point_transactions', 3);
         $this->assertDatabaseHas('game_rooms', ['id' => $room->id, 'status' => 'finished']);
@@ -33,6 +40,7 @@ class AwardGamePointsActionTest extends TestCase
         $action->handle($room, $winner);
 
         $this->assertSame(120, $winner->fresh()->points);
+        $this->assertSame(100, $winner->fresh()->coins);
         $this->assertSame(20, $otherPlayer->fresh()->points);
         $this->assertDatabaseCount('point_transactions', 3);
     }

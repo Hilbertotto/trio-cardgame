@@ -19,6 +19,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'is_guest' => $this->is_guest,
             'points' => $this->points,
+            'coins' => $this->coins,
             'avatar_id' => $this->avatar_id ?? (($this->id - 1) % 40) + 1,
         ];
     }
