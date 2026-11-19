@@ -1096,10 +1096,10 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           ),
         ),
         Positioned(
-          left: MediaQuery.sizeOf(context).width * .12,
-          right: MediaQuery.sizeOf(context).width * .12,
+          left: MediaQuery.sizeOf(context).width * .08,
+          right: MediaQuery.sizeOf(context).width * .08,
           top: MediaQuery.sizeOf(context).height * .785,
-          height: MediaQuery.sizeOf(context).height * .065,
+          height: MediaQuery.sizeOf(context).height * .09,
           child: Semantics(
             button: true,
             label: api.isAuthenticated ? 'Kijelentkezés' : 'Bejelentkezés',
@@ -1510,6 +1510,36 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             });
           }
 
+          void startMatchmakingPolling() {
+            matchmakingTimer?.cancel();
+            matchmakingTimer = Timer.periodic(const Duration(seconds: 3), (
+              timer,
+            ) async {
+              if (!context.mounted || !waitingForMatch) {
+                timer.cancel();
+                return;
+              }
+              try {
+                final result = await api.getMatchmakingStatus();
+                if (!context.mounted) return;
+                final matchedRoom = result.room;
+                if (matchedRoom != null &&
+                    (result.status == 'matched' ||
+                        matchedRoom.status == 'playing' ||
+                        matchedRoom.status == 'finished')) {
+                  launchNetworkGame(matchedRoom);
+                  return;
+                }
+                setModalState(() {
+                  room = matchedRoom;
+                  status = 'Várunk ellenfélre…';
+                });
+              } catch (_) {
+                // A következő automatikus frissítésnél újra próbáljuk.
+              }
+            });
+          }
+
           return AlertDialog(
             backgroundColor: const Color(0xff07534d),
             shape: RoundedRectangleBorder(
@@ -1616,12 +1646,17 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                                   room = result.room;
                                   waitingForMatch = result.status != 'matched';
                                   if (waitingForMatch) {
-                                    status =
-                                        '${room!.joinedPlayers}/${room!.playerCount} játékos • várunk a következőre…';
-                                    startRoomPolling();
+                                    status = 'Várunk ellenfélre…';
+                                    startMatchmakingPolling();
                                   } else {
                                     status = 'Megvan minden játékos!';
-                                    launchNetworkGame(room!);
+                                    if (room != null) {
+                                      launchNetworkGame(room!);
+                                    } else {
+                                      throw const TrioApiException(
+                                        'A szerver nem adta vissza a létrejött szobát.',
+                                      );
+                                    }
                                   }
                                 }),
                           icon: const Icon(Icons.groups),

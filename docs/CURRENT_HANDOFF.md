@@ -111,3 +111,4 @@ olvassa el.
 
 - A kezdőképernyő mintaképéhez igazítva a gomb most csak az állapotnak megfelelő ikont mutatja, felirat nélkül.
 - A kezdőképernyő háttérképe és a be-/kijelentkezési gombok a kapott TRIO-grafikákra cserélve.
+- A kapott gombgrafika mérete nagyobb lett, hogy jobban illeszkedjen a kezdőképernyő arányaihoz.
