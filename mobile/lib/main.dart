@@ -1116,22 +1116,11 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                     if (mounted) setState(() => coins = api.coins);
                   }
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xff07534d),
-                    borderRadius: BorderRadius.circular(40),
-                    border: Border.all(color: const Color(0xff8ff1d7), width: 3),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        api.isAuthenticated ? Icons.logout : Icons.person,
-                        color: const Color(0xfffff0c7),
-                        size: 26,
-                      ),
-                    ],
-                  ),
+                child: Image.asset(
+                  api.isAuthenticated
+                      ? 'assets/design/logout_button.png'
+                      : 'assets/design/login_button.png',
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

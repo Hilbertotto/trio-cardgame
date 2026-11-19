@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
 import 'package:trio_android/main.dart';
 
 void main() {
@@ -15,6 +14,6 @@ void main() {
   testWidgets('TRIO kezdőképernyő megjelenik', (tester) async {
     await tester.pumpWidget(const TrioApp());
     expect(find.bySemanticsLabel('Játék indítása'), findsOneWidget);
-    expect(find.byIcon(Icons.person), findsOneWidget);
+    expect(find.bySemanticsLabel('Bejelentkezés'), findsOneWidget);
   });
 }

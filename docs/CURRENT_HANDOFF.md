@@ -110,3 +110,4 @@ olvassa el.
 ## Ikonos bejelentkezési gomb – 2026-11-19
 
 - A kezdőképernyő mintaképéhez igazítva a gomb most csak az állapotnak megfelelő ikont mutatja, felirat nélkül.
+- A kezdőképernyő háttérképe és a be-/kijelentkezési gombok a kapott TRIO-grafikákra cserélve.
