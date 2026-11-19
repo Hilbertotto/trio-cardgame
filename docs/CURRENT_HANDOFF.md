@@ -124,3 +124,10 @@ olvassa el.
 - A `ViewServiceProvider` regisztrálva lett, és létrejött a hiányzó `config/view.php`.
 - Szerveren frissítés után `composer dump-autoload` és `php artisan optimize:clear` szükséges.
 - A friss log megmutatta a `Route [login] not defined` hibát; az API vendégkérései most nem irányulnak webes login route-ra.
+
+## Azonnali WINNER matchmaking után
+
+- Ok: a JoinMatchmakingAction a korábbi bejegyzés szobáját állapotellenőrzés nélkül visszaadta.
+- Javítás: csak várakozó/aktív, győztes nélküli szoba és emberi játékoshely használható újra. Lezárt játék résztvevőit megőrizzük.
+- Laravel teszt blokkolva: helyi PHP 8.2.12, szükséges >=8.3. Szerveren php artisan test futtatandó.
+- Következő lépés: szerver frissítése és új véletlen keresés ellenőrzése.

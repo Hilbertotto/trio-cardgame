@@ -46,6 +46,7 @@ Működjön helyi gépi ellenfelekkel és internetes többjátékos módban.
 
 - Vendég- és Google-hitelesítés, profil és virtuális ponttörténet.
 - Szobalétrehozás, szobakódos belépés és automatikus matchmaking.
+- Új keresés nem használhat lezárt szobát vagy bot által átvett játékoshelyet.
 - Szerver által kezelt játékállapot és lépések.
 - Inaktivitás: 30 másodperc után csak az érintett kliens kap 10 másodperces visszaszámlálást; utána bot veszi át a helyét.
 - A szerveres botlépések szándékosan lassítottak.

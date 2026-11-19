@@ -24,12 +24,20 @@ class JoinMatchmakingAction
                 ->lockForUpdate()
                 ->first();
 
-            if ($existing?->gameRoom !== null && $existing->player_count === $playerCount) {
+            $existingRoom = $existing?->gameRoom;
+            $activeSeat = $existingRoom?->players->firstWhere('id', $player->id)?->pivot->seat;
+            $canResume = $existingRoom !== null
+                && in_array($existingRoom->status, ['waiting', 'playing'], true)
+                && empty($existingRoom->state['winner_seat'])
+                && $activeSeat !== null
+                && ! in_array((int) $activeSeat, array_map('intval', $existingRoom->state['bot_seats'] ?? []), true);
+
+            if ($canResume && $existing->player_count === $playerCount) {
                 return $existing->gameRoom;
             }
 
             if ($existing !== null) {
-                if ($existing->gameRoom !== null) {
+                if ($existing->gameRoom?->status === 'waiting') {
                     $existing->gameRoom->players()->detach($player->id);
                 }
                 $existing->delete();
