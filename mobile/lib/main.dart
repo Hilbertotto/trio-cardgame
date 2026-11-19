@@ -84,7 +84,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   static const googleWebClientId = String.fromEnvironment(
     'GOOGLE_WEB_CLIENT_ID',
     defaultValue:
-        '1075466467650-a5gtnk4rmbnb76ao6qjtc1oioa00fbjm.apps.googleusercontent.com',
+        '1075466467650-geobj7gpcmglmqbdoag7prghdeinf8mq.apps.googleusercontent.com',
   );
   bool googleSignInInitialized = false;
   GoogleSignInAccount? googleAccount;

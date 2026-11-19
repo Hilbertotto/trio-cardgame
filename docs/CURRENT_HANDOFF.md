@@ -77,9 +77,9 @@ olvassa el.
 
 ## Google-belépés javítása – 2026-11-19
 
-- A Google OAuth Web Client ID eltért az OAuth-fájlban és a szerveren használt azonosítótól.
-- Az app alapértelmezett Client ID-ja és a SolarisMiner `.env` értéke egységesítve lett.
-- A Laravel konfigurációs cache frissítve lett; új mobil APK készítése szükséges.
+- A szerver Web Client ID-ja az eredeti `geobj7...` azonosító; az OAuth-fájlban lévő `installed` kliens nem használható szerver Web Clientként.
+- Az app és a SolarisMiner `.env` ismét ugyanazt a Web Client ID-t használja.
+- Az Android OAuth belépéshez a Google Cloud Console-ban az alkalmazás package ID-jához és SHA-1 aláírásához Android OAuth klienst is fel kell venni.
 
 ## TRIO-számláló az avatarok mellett – 2026-11-19
 
