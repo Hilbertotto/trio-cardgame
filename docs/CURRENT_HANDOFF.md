@@ -1,5 +1,12 @@
 # TRIO aktuális átadás
 
+## Play előkészítés – 2026-11-20
+
+- Aláírt Play AAB elkészült: G:\Saját meghajtó\applikacio\trio\TRIO-1.0.3-build4-play.aab. VersionName 1.0.3, versionCode 4. Külön ASCII buildmásolat: C:\dev\trio-play-build, eredeti upload kulccsal.
+- Flutter release utóellenőrzés strip-debug-symbols hibát jelzett; közvetlen Gradle bundleRelease sikeres, jarsigner: jar verified (önaláírt cert és ZIP/JarInputStream figyelmeztetések).
+- Play Console feltöltés NEM történt meg: olvasható a Chrome állapota, de UI kattintás geometry unavailable, billentyűs navigálás nem változtatott oldalt.
+- Konzol szerint piszkozat, hiányos adatlap, 0 zárt tesztelő; 12 tesztelő és 14 nap szükséges éles hozzáférés igényléséhez. Nyílt teszt jelenleg nem indítható.
+
 - 2026-11-20: Egységesített beállításpanel dupla játékmódkerete javítva: a régi keretes módválasztó kép helyett saját kitöltés és felirat a panel aranykeretén belül; nehézségválasztó is a kereten belül. Flutter 3/3 teszt, debug build sikeres, emulátor és Drive APK frissítve. Kézi vizuális próba szükséges.
 
 ## Egységesített képkészlet – 2026-11-20
