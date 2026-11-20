@@ -15,6 +15,7 @@ Route::prefix('v1')->group(function (): void {
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/profile', ProfileController::class);
+        Route::patch('/profile', [ProfileController::class, 'update']);
         Route::get('/leaderboard', \App\Http\Controllers\Api\V1\LeaderboardController::class);
         Route::get('/points/history', PointHistoryController::class);
         Route::post('/offline-results', OfflineResultController::class);

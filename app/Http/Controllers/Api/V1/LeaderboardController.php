@@ -13,7 +13,8 @@ class LeaderboardController extends Controller
     {
         $query = User::query()->where('is_guest', false);
         $entry = fn (User $user, int $rank): array => [
-            'rank' => $rank, 'name' => $user->name,
+            'rank' => $rank, 'name' => $user->full_name ?? $user->name,
+            'country_code' => $user->country_code,
             'avatar_id' => $user->avatar_id ?: 1, 'points' => (int) $user->points,
         ];
         $top = (clone $query)->orderByDesc('points')->orderBy('id')->limit(5)->get()

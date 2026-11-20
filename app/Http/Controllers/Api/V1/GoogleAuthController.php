@@ -63,6 +63,7 @@ class GoogleAuthController extends Controller
             'is_guest' => false,
         ]);
         $user->email_verified_at ??= now();
+        $user->full_name ??= (string) ($payload['name'] ?? $user->name);
         $user->save();
 
         return response()->json([

@@ -101,6 +101,7 @@ class TrioApi {
   String? _token;
   int? playerId;
   String? playerName;
+  String? countryCode;
   int? coins;
 
   bool get isAuthenticated => _token != null;
@@ -117,6 +118,7 @@ class TrioApi {
     _token = null;
     playerId = null;
     playerName = null;
+    countryCode = null;
     coins = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('trio.auth.token');
@@ -218,7 +220,8 @@ class TrioApi {
         .timeout(const Duration(seconds: 15));
     final data = _resource(_decode(response));
     coins = (data['coins'] as num?)?.toInt() ?? coins;
-    playerName = data['name'] as String? ?? playerName;
+    playerName = (data['full_name'] ?? data['name']) as String? ?? playerName;
+    countryCode = data['country_code'] as String?;
     if (_token != null) await _persistSession();
   }
 
@@ -306,6 +309,13 @@ class TrioApi {
     final response = await _client.get(Uri.parse('$baseUrl/leaderboard'), headers: _headers)
         .timeout(const Duration(seconds: 15));
     return _decode(response);
+  }
+
+  Future<void> saveProfile(String fullName, String country) async {
+    final response = await _client.patch(Uri.parse('$baseUrl/profile'), headers: _headers,
+      body: jsonEncode({'full_name': fullName.trim(), 'country_code': country})).timeout(const Duration(seconds: 15));
+    _decode(response);
+    await refreshProfile();
   }
 
   Map<String, String> get _headers {
