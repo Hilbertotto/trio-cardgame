@@ -1,5 +1,13 @@
 # TRIO aktuális átadás
 
+## Globális ranglista és profil – 2026-11-20
+
+- Új kezdőkép alsó középső Ranglista gombbal; megnyitáskor hitelesített GET /api/v1/leaderboard: top 5 és saját helyezés, pont szerint, id holtverseny-sorrenddel, vendégek nélkül.
+- Ranglistanézet a mellékelt háttérrel, avatarral, teljes névvel, országzászlóval és ponttal. Országos/napi szűrés még nincs.
+- Szerver profiles: full_name és country_code mezők, PATCH /api/v1/profile. Google-név alapérték, ország kézi kétbetűs kód (HU stb.). Profil szerkesztés ranglista jobb felső gombjáról; hiányzó országnál automatikus adatbekérés.
+- Szerverre git pull és adatbázis-migráció sikeresen lefutott. PHP szintaxis és route-regisztráció ellenőrizve. Laravel regressziós teszt hozzáadva, de éles környezetben nincs test parancs; ott tesztet nem futtattunk.
+- Flutter tesztek 3/3 és debug build sikeres. Emulátorra telepítve; teljes Google-belépéses és ranglista/profil kézi próba következik.
+
 ## Ranglista háttér – 2026-11-20
 
 - A felhasználó ranglistagrafikája elmentve: mobile/assets/design/leaderboard_panel.png.
