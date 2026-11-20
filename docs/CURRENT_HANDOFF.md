@@ -1,5 +1,7 @@
 # TRIO aktuális átadás
 
+- 2026-11-20: Játékindító modal magassága növelve (képernyő max. 86%-a), módválasztó betűmérete 16, nehézségsáv magassága növelve a zsúfoltság csökkentésére. Flutter tesztek 3/3, debug build és emulátortelepítés sikeres. Drive TRIO-test-latest.apk frissítve. A Play AAB korábbi elrendezést tartalmaz, még nem feltöltött.
+
 ## Play előkészítés – 2026-11-20
 
 - Aláírt Play AAB elkészült: G:\Saját meghajtó\applikacio\trio\TRIO-1.0.3-build4-play.aab. VersionName 1.0.3, versionCode 4. Külön ASCII buildmásolat: C:\dev\trio-play-build, eredeti upload kulccsal.

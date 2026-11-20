@@ -1199,7 +1199,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
         screen.maxWidth * .92,
         screen.maxHeight * .84 * panelRatio,
       );
-      final panelHeight = panelWidth / panelRatio;
+      final panelHeight = min(screen.maxHeight * .86, panelWidth / panelRatio * 1.28);
       return Container(
         color: const Color(0xaa001e1c),
         alignment: Alignment.center,
@@ -1248,8 +1248,8 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
         Positioned(
           left: size.maxWidth * .085,
           right: size.maxWidth * .085,
-          top: size.maxHeight * .498,
-          height: size.maxHeight * .055,
+          top: size.maxHeight * .497,
+          height: size.maxHeight * .052,
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -1262,7 +1262,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                       child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Text('${serverMode == isServer ? '✓ ' : ''}${isServer ? 'Szerver játék' : 'Gépi játék'}',
-                          style: TextStyle(fontFamily: 'serif', fontWeight: FontWeight.w900,
+                          style: TextStyle(fontFamily: 'serif', fontSize: 16, fontWeight: FontWeight.w900,
                             color: serverMode == isServer ? const Color(0xff003d39) : const Color(0xfffff0c7))),
                       ))),
                     ),
@@ -1304,8 +1304,8 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           Positioned(
             left: size.maxWidth * .16,
             right: size.maxWidth * .16,
-            top: size.maxHeight * .557,
-            height: size.maxHeight * .035,
+            top: size.maxHeight * .553,
+            height: size.maxHeight * .043,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
