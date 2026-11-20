@@ -1,5 +1,12 @@
 # TRIO aktuális átadás
 
+## Ranglista háttér – 2026-11-20
+
+- A felhasználó ranglistagrafikája elmentve: mobile/assets/design/leaderboard_panel.png.
+- Öt kiemelt hely és alsó saját helyezés mező van rajta. A globális cím a kép része; országos/napi nézethez dinamikus címezés szükséges.
+- A ranglista API és kliensnézet még nincs megvalósítva. Korábbi igény: globális, országos és napi rangpontlista; országot külön választani, Google országinformációra nem támaszkodni.
+- Ebben a menetben kizárólag grafikai asset és dokumentáció került be, build nem futott.
+
 - 2026-11-20: A szerverpanel ismétlődő alsó sárga alapüzenete eltávolítva. A képen lévő útmutató és a tényleges hibák visszajelzése megmarad. Debug build és emulátortelepítés sikeres.
 
 - 2026-11-20: Csatlakozás/Belépés felirat betűmérete 25-ről 22-re csökkent, stílus megtartva. Debug build sikeres, emulátor frissítve.
