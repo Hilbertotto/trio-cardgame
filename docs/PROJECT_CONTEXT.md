@@ -54,6 +54,8 @@ Működjön helyi gépi ellenfelekkel és internetes többjátékos módban.
 
 ## Fontos vizuális döntések
 
+- 2026-11-20: egységesített magyar képkészlet beépítve. Az eredeti készlet a Git 5787530 commitban és a Drive TRIO-regi-kepek-20261120-163604.zip mentésében megőrzött; szükség esetén visszacserélhető.
+
 - Álló mobilnézet; a háttér minden kijelzőt sáv nélkül töltsön ki.
 - A saját kártyák alul, enyhén fedve és ívesen jelennek meg.
 - A középső lapok nem takarhatják a játékosokat; a kiválasztott lapok mérete egyezzen az asztali lapokéval.

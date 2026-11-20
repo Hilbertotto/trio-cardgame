@@ -1,5 +1,12 @@
 # TRIO aktuális átadás
 
+## Egységesített képkészlet – 2026-11-20
+
+- TRIO_egysegesitett_magyar_kepek.zip beépítve: 107 képfájl, ebből 77 eltérő. Az összes képméret változatlan.
+- Régi teljes képkészlet ZIP: G:\Saját meghajtó\applikacio\trio\TRIO-regi-kepek-20261120-163604.zip. A csere előtti Git commit: 5787530; innen az assets/res fájlok külön is visszaállíthatók.
+- A felhasználó kifejezetten kéri a régi készlet megtartását esetleges visszaállításhoz.
+- Flutter tesztek 3/3 és debug APK build sikeres. Emulátor frissítve, Drive TRIO-test-latest.apk frissítve. Vizuális felhasználói értékelés következik.
+
 ## Négy ranglistanézet és rezgés – 2026-11-20
 
 - Új 941x1672 ranglistapanel, négy szűrő: globális/országos, teljes/napi. Ranglista modal a kezdőképernyő fölött, dinamikus címmel és kijelölt gombbal.
