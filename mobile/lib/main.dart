@@ -1552,6 +1552,91 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             });
           }
 
+          if (room == null && !waitingForMatch) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.all(14),
+              child: SingleChildScrollView(
+                child: AspectRatio(
+                  aspectRatio: 1119 / 1398,
+                  child: LayoutBuilder(builder: (context, box) {
+                    Widget area(double top, double height, Widget child) => Positioned(
+                      left: box.maxWidth * .055,
+                      right: box.maxWidth * .055,
+                      top: box.maxHeight * top,
+                      height: box.maxHeight * height,
+                      child: child,
+                    );
+                    return Stack(children: [
+                      Positioned.fill(child: Image.asset('assets/design/server_panel.png', fit: BoxFit.fill)),
+                      area(.315, .075, TextField(
+                        controller: codeController,
+                        enabled: !loading,
+                        maxLength: 6,
+                        onChanged: (_) => setModalState(() {}),
+                        textCapitalization: TextCapitalization.characters,
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]'))],
+                        style: const TextStyle(color: Color(0xfffff0c7), fontSize: 22, fontWeight: FontWeight.bold),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: const Color(0xff003d39),
+                          border: InputBorder.none,
+                          counterText: '',
+                          suffixText: '${codeController.text.length}/6',
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        ),
+                      )),
+                      area(.415, .10, InkWell(onTap: loading ? null : () => run(() async {
+                        room = await api.createRoom(count);
+                        waitingForMatch = true;
+                        status = 'Szoba elkészült. Oszd meg a kódot a játékosokkal!';
+                        startRoomPolling();
+                      }))),
+                      area(.55, .10, InkWell(
+                        onTap: loading ? null : () => run(() async {
+                          if (codeController.text.trim().isNotEmpty) {
+                            if (codeController.text.trim().length != 6) {
+                              throw const TrioApiException('A szobakód pontosan 6 karakter.');
+                            }
+                            room = await api.joinRoom(codeController.text.trim());
+                            if (room!.status == 'playing') {
+                              launchNetworkGame(room!);
+                            } else {
+                              waitingForMatch = true;
+                              status = 'Várunk a következő játékosra…';
+                              startRoomPolling();
+                            }
+                          } else {
+                            final result = await api.joinMatchmaking(count);
+                            room = result.room;
+                            waitingForMatch = result.status != 'matched';
+                            if (waitingForMatch) {
+                              status = 'Várunk ellenfélre…';
+                              startMatchmakingPolling();
+                            } else if (room != null) {
+                              launchNetworkGame(room!);
+                            }
+                          }
+                        }),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: box.maxWidth * .23, right: 12),
+                          child: Center(child: FittedBox(child: Text(
+                            codeController.text.trim().isEmpty ? 'Csatlakozás ($count fő)' : 'Belépés a szobába',
+                            style: const TextStyle(color: Color(0xfffff0c7), fontSize: 25, fontWeight: FontWeight.w900),
+                          ))),
+                        ),
+                      )),
+                      if (loading) area(.79, .04, const Center(child: CircularProgressIndicator())),
+                      if (!loading && status.isNotEmpty) area(.79, .04, Center(child: Text(status, textAlign: TextAlign.center, style: const TextStyle(color: Color(0xffffd33f), fontSize: 11)))),
+                      Positioned(left: box.maxWidth * .62, right: box.maxWidth * .08, top: box.maxHeight * .835, height: box.maxHeight * .09,
+                        child: InkWell(onTap: loading ? null : () => Navigator.pop(dialogContext))),
+                    ]);
+                  }),
+                ),
+              ),
+            );
+          }
+
           return AlertDialog(
             backgroundColor: const Color(0xff07534d),
             shape: RoundedRectangleBorder(

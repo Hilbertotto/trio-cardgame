@@ -1,5 +1,11 @@
 # TRIO aktuális átadás
 
+## Szerverjáték grafikus panel – 2026-11-20
+
+- Új server_panel.png a felhasználó mellékletéből. Szobakód nélkül az alsó gomb Csatlakozás (X fő), kóddal Belépés a szobába. A szobalétrehozás külön képgomb maradt.
+- A várakozó szoba továbbra is a meglévő résztvevőlistás felületet használja.
+- Flutter tesztek 3/3 és debug build sikeres; emulátorra telepítve. Vizuális és online végponttól végpontig ellenőrzés még szükséges.
+
 ## Profilnév és győzelmi érmejelzés – 2026-11-20
 
 - Helyi játékban a bejelentkezett profil neve jelenik meg; a nevet a kliens menti és profilfrissítésből is átveszi.
