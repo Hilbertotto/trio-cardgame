@@ -1,5 +1,11 @@
 # TRIO aktuális átadás
 
+## Szerverpanel vissza és input javítás – 2026-11-20
+
+- Szobakód mező kitöltése átlátszó. A grafikus Vissza gomb visszaállítja a játékválasztót.
+- A TextEditingController felszabadítása a dialog route completed állapotát várja meg a bezáró animáció miatti korai dispose elkerülésére.
+- Flutter 3/3 teszt, debug build és emulátortelepítés sikeres; a felhasználó által jelzett visszalépési hiba kézi újrapróbálása szükséges.
+
 ## Szerverjáték grafikus panel – 2026-11-20
 
 - Új server_panel.png a felhasználó mellékletéből. Szobakód nélkül az alsó gomb Csatlakozás (X fő), kóddal Belépés a szobába. A szobalétrehozás külön képgomb maradt.

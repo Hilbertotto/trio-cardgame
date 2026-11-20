@@ -1463,6 +1463,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
         'Hozz létre szobát, írj be egy kódot, vagy keress ellenfeleket!';
     TrioRoom? room;
     Timer? matchmakingTimer;
+    ModalRoute<dynamic>? serverDialogRoute;
 
     if (!mounted) return;
     await showDialog<void>(
@@ -1470,6 +1471,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
       barrierDismissible: false,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setModalState) {
+          serverDialogRoute = ModalRoute.of(context);
           Future<void> run(Future<void> Function() action) async {
             if (loading) return;
             setModalState(() => loading = true);
@@ -1578,8 +1580,8 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                         inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[A-Za-z0-9]'))],
                         style: const TextStyle(color: Color(0xfffff0c7), fontSize: 22, fontWeight: FontWeight.bold),
                         decoration: InputDecoration(
-                          filled: true,
-                          fillColor: const Color(0xff003d39),
+                          filled: false,
+                          fillColor: Colors.transparent,
                           border: InputBorder.none,
                           counterText: '',
                           suffixText: '${codeController.text.length}/6',
@@ -1629,7 +1631,11 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                       if (loading) area(.79, .04, const Center(child: CircularProgressIndicator())),
                       if (!loading && status.isNotEmpty) area(.79, .04, Center(child: Text(status, textAlign: TextAlign.center, style: const TextStyle(color: Color(0xffffd33f), fontSize: 11)))),
                       Positioned(left: box.maxWidth * .62, right: box.maxWidth * .08, top: box.maxHeight * .835, height: box.maxHeight * .09,
-                        child: InkWell(onTap: loading ? null : () => Navigator.pop(dialogContext))),
+                        child: InkWell(onTap: loading ? null : () {
+                          FocusScope.of(context).unfocus();
+                          Navigator.pop(dialogContext);
+                          if (mounted) setState(() => showGameOptions = true);
+                        })),
                     ]);
                   }),
                 ),
@@ -1861,6 +1867,8 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
       ),
     );
     matchmakingTimer?.cancel();
+    // showDialog resolves before the closing animation removes its TextField.
+    await serverDialogRoute?.completed;
     codeController.dispose();
   }
 
