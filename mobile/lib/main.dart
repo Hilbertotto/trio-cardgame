@@ -232,6 +232,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     final state = room.gameState;
     if (!mounted || state == null || room.mySeat < 1) return;
     final wasGameOver = gameOver;
+    final previousTrios = ps.fold<int>(0, (sum, player) => sum + player.trios.length);
     final allSeats = room.seats.isNotEmpty
         ? room.seats
         : [for (int i = 1; i <= room.playerCount; i++) i];
@@ -304,7 +305,10 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
       turnTimeoutRemaining = room.turnTimeoutRemaining;
     });
     if (!wasGameOver && gameOver) {
+      unawaited(resultVibration(winner: true));
       Future<void>.microtask(refreshOnlineProfile);
+    } else if (!gameOver && players.fold<int>(0, (sum, player) => sum + player.trios.length) > previousTrios) {
+      unawaited(resultVibration());
     }
   }
 
@@ -598,6 +602,14 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     unawaited(playGameSound('flip'));
   }
 
+  Future<void> resultVibration({bool winner = false}) async {
+    await HapticFeedback.mediumImpact();
+    if (winner) {
+      await Future<void>.delayed(const Duration(milliseconds: 220));
+      if (mounted) await HapticFeedback.mediumImpact();
+    }
+  }
+
   Future<void> playGameSound(String sound) async {
     try {
       await const MethodChannel('hu.triogame/sounds').invokeMethod<void>(sound);
@@ -640,6 +652,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
       ps[turn].trios.add(v);
       unawaited(playGameSound('trio'));
       final won = isWinningTrio(v, ps[turn].trios.length);
+      unawaited(resultVibration(winner: won));
       setState(() {
         busy = true;
         message = won

@@ -1,5 +1,13 @@
 # TRIO aktuális átadás
 
+## Négy ranglistanézet és rezgés – 2026-11-20
+
+- Új 941x1672 ranglistapanel, négy szűrő: globális/országos, teljes/napi. Ranglista modal a kezdőképernyő fölött, dinamikus címmel és kijelölt gombbal.
+- API scope=global|country, period=all|daily. Napi pontok point_transactions összegéből, Europe/Budapest napi határok UTC-re alakítva; csak pozitív napi ponttal szerepel valaki. Ország a saját profil országkódja, hiányában 422.
+- Szerverjavítás telepítve, PHP szintaxis ellenőrizve. Országos/napi regressziós teszt hozzáadva, futtatás még PHP fejlesztői környezetet igényel.
+- Triónál egy mediumImpact, győzelemnél két mediumImpact 220ms különbséggel, helyben és online állapotváltáskor.
+- Flutter tesztek 3/3, debug build sikeres. Emulátor frissítve; fizikai teszt APK: G:\Saját meghajtó\applikacio\trio\TRIO-test-latest.apk. Rezgés és ranglistaszűrők kézi ellenőrzése következik.
+
 ## Globális ranglista és profil – 2026-11-20
 
 - Új kezdőkép alsó középső Ranglista gombbal; megnyitáskor hitelesített GET /api/v1/leaderboard: top 5 és saját helyezés, pont szerint, id holtverseny-sorrenddel, vendégek nélkül.
