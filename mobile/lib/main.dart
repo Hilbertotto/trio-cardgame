@@ -1474,8 +1474,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     final codeController = TextEditingController();
     var loading = false;
     var waitingForMatch = false;
-    var status =
-        'Hozz létre szobát, írj be egy kódot, vagy keress ellenfeleket!';
+    var status = '';
     TrioRoom? room;
     Timer? matchmakingTimer;
     ModalRoute<dynamic>? serverDialogRoute;

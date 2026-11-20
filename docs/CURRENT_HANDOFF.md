@@ -1,5 +1,7 @@
 # TRIO aktuális átadás
 
+- 2026-11-20: A szerverpanel ismétlődő alsó sárga alapüzenete eltávolítva. A képen lévő útmutató és a tényleges hibák visszajelzése megmarad. Debug build és emulátortelepítés sikeres.
+
 - 2026-11-20: Csatlakozás/Belépés felirat betűmérete 25-ről 22-re csökkent, stílus megtartva. Debug build sikeres, emulátor frissítve.
 
 ## Hangok és szerverpanel tipográfia – 2026-11-20
