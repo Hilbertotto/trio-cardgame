@@ -361,6 +361,10 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           await flyCard(card.value, fromKey, revealSlotKeys[index]);
           if (!mounted) return;
           setState(() => shown.add(card));
+          playCardClick();
+          if (shown.length == 3 && shown.every((item) => item.value == shown.first.value)) {
+            unawaited(playGameSound('trio'));
+          }
         }
       } else if (raw.isEmpty && shown.isNotEmpty) {
         final returning = List<R>.of(shown);
@@ -590,7 +594,17 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   }
 
   void playCardClick() {
-    unawaited(SystemSound.play(SystemSoundType.click));
+    unawaited(playGameSound('flip'));
+  }
+
+  Future<void> playGameSound(String sound) async {
+    try {
+      await const MethodChannel('hu.triogame/sounds').invokeMethod<void>(sound);
+    } on PlatformException {
+      // Audio must never interrupt gameplay.
+    } on MissingPluginException {
+      // Native audio is only available on Android.
+    }
   }
 
   Future<void> resolve() async {
@@ -623,6 +637,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     } else if (shown.length == 3) {
       final v = shown.first.value;
       ps[turn].trios.add(v);
+      unawaited(playGameSound('trio'));
       final won = isWinningTrio(v, ps[turn].trios.length);
       setState(() {
         busy = true;
@@ -1571,8 +1586,12 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                     );
                     return Stack(children: [
                       Positioned.fill(child: Image.asset('assets/design/server_panel.png', fit: BoxFit.fill)),
-                      area(.315, .075, TextField(
+                      area(.315, .075, Row(children: [
+                        const SizedBox(width: 12),
+                        Expanded(child: TextField(
                         controller: codeController,
+                        textAlign: TextAlign.center,
+                        textAlignVertical: TextAlignVertical.center,
                         enabled: !loading,
                         maxLength: 6,
                         onChanged: (_) => setModalState(() {}),
@@ -1584,10 +1603,19 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                           fillColor: Colors.transparent,
                           border: InputBorder.none,
                           counterText: '',
-                          suffixText: '${codeController.text.length}/6',
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                         ),
                       )),
+                        Container(
+                          width: box.maxWidth * .13,
+                          height: box.maxHeight * .055,
+                          alignment: Alignment.center,
+                          color: const Color(0xff003d39),
+                          child: Text('${codeController.text.length}/6', style: const TextStyle(color: Color(0xfffff0c7), fontSize: 16, fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(width: 8),
+                      ])),
                       area(.415, .10, InkWell(onTap: loading ? null : () => run(() async {
                         room = await api.createRoom(count);
                         waitingForMatch = true;
@@ -1624,7 +1652,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                           padding: EdgeInsets.only(left: box.maxWidth * .23, right: 12),
                           child: Center(child: FittedBox(child: Text(
                             codeController.text.trim().isEmpty ? 'Csatlakozás ($count fő)' : 'Belépés a szobába',
-                            style: const TextStyle(color: Color(0xfffff0c7), fontSize: 25, fontWeight: FontWeight.w900),
+                            style: const TextStyle(color: Color(0xfffff0c7), fontSize: 25, fontFamily: 'serif', fontWeight: FontWeight.w900, shadows: [Shadow(color: Colors.black54, offset: Offset(0, 2), blurRadius: 2)]),
                           ))),
                         ),
                       )),

@@ -1,5 +1,12 @@
 # TRIO aktuális átadás
 
+## Hangok és szerverpanel tipográfia – 2026-11-20
+
+- Android natív MethodChannel és halk ToneGenerator jelzés: lapfelfedés rövid beep, trió rövid ACK. Média hangerőt követ. Helyi és online felfedéshez bekötve; hangzás kézi ellenőrzendő.
+- Csatlakozás/Belépés felirat vastag serif, enyhe árnyékkal. Szobakód szöveg középre igazítva, dupla számláló takarása javítva.
+- Emulátor újraindult hw.keyboard=yes konfigurációval, virtuális billentyűzet is engedélyezett. Kézi bevitel még ellenőrzendő.
+- Flutter tesztek 3/3, debug build és emulátortelepítés sikeres.
+
 ## Szerverpanel vissza és input javítás – 2026-11-20
 
 - Szobakód mező kitöltése átlátszó. A grafikus Vissza gomb visszaállítja a játékválasztót.
