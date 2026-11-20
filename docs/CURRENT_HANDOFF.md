@@ -1,5 +1,12 @@
 # TRIO aktuális átadás
 
+## Animált szabálybemutató – 2026-11-20
+
+- A szabálymodal 15 másodperces ismétlődő lapfordítós bemutatót kapott: két eltérő lap, két egyforma és egy eltérő, végül három egyforma.
+- Hibánál szöveges visszajelzés és visszafordítás, sikeres triónál kiemelkedés és zöld fény jelzi a helyes megoldást.
+- Flutter tesztek 3/3 sikeresek, debug APK build sikeres; emulátorra telepítve.
+- Új widget: mobile/lib/rules_card_demo.dart. Kézi vizuális ellenőrzés következik a Játékszabály ablakban.
+
 Frissítve: 2026-11-19
 
 ## Legutóbbi elkészült munka

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'trio_api.dart';
+import 'rules_card_demo.dart';
 
 bool isWinningTrio(int trioValue, int trioCount) =>
     trioValue == 7 || trioCount >= 3;
@@ -973,20 +974,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                         ),
                         const SizedBox(height: 14),
                         Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              for (final value in [1, 2, 7])
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                                  child: SizedBox(
-                                    width: 62,
-                                    height: 84,
-                                    child: face(value, w: 62),
-                                  ),
-                                ),
-                            ],
-                          ),
+                          child: const RulesCardDemo(),
                         ),
                         const SizedBox(height: 16),
                         _ruleStep('1', 'A körödben válaszd az asztal vagy egy játékos szélső lapját.'),
