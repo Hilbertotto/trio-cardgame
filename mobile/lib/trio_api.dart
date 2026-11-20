@@ -305,8 +305,8 @@ class TrioApi {
     if (response.statusCode != 204) _decode(response);
   }
 
-  Future<Map<String, dynamic>> getLeaderboard() async {
-    final response = await _client.get(Uri.parse('$baseUrl/leaderboard'), headers: _headers)
+  Future<Map<String, dynamic>> getLeaderboard({bool country = false, bool daily = false}) async {
+    final response = await _client.get(Uri.parse('$baseUrl/leaderboard').replace(queryParameters: {'scope': country ? 'country' : 'global', 'period': daily ? 'daily' : 'all'}), headers: _headers)
         .timeout(const Duration(seconds: 15));
     return _decode(response);
   }

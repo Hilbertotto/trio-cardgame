@@ -26,4 +26,24 @@ class LeaderboardTest extends TestCase
     {
         $this->getJson('/api/v1/leaderboard')->assertUnauthorized();
     }
+
+    public function test_daily_country_filters_use_todays_transactions(): void
+    {
+        $this->travelTo(\Carbon\Carbon::parse('2026-11-20 12:00:00', 'Europe/Budapest'));
+        $me = User::factory()->create(['is_guest' => false, 'points' => 500]);
+        $me->country_code = 'HU';
+        $me->save();
+        $other = User::factory()->create(['is_guest' => false, 'points' => 900]);
+        $other->country_code = 'AT';
+        $other->save();
+        foreach ([[$me, 20, now()], [$me, 100, now()->subDay()], [$other, 80, now()]] as [$user, $amount, $at]) {
+            \App\Models\PointTransaction::create(['user_id' => $user->id, 'type' => 'test', 'amount' => $amount, 'balance_after' => $amount, 'created_at' => $at]);
+        }
+        Sanctum::actingAs($me);
+        $this->getJson('/api/v1/leaderboard?scope=country&period=daily')->assertOk()
+            ->assertJsonCount(1, 'top')->assertJsonPath('me.points', 20)->assertJsonPath('me.rank', 1);
+        $this->getJson('/api/v1/leaderboard?period=daily')->assertOk()
+            ->assertJsonPath('top.0.points', 80)->assertJsonPath('me.rank', 2);
+        $this->travelBack();
+    }
 }

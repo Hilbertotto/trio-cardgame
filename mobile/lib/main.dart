@@ -1169,7 +1169,14 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   Future<void> showLeaderboard() async {
     if (!api.isAuthenticated && !await showGoogleLogin()) return;
     if (!mounted) return;
-    await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => LeaderboardPage(api: api)));
+    await showDialog<void>(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 24),
+        child: LeaderboardPage(api: api),
+      ),
+    );
   }
 
   Widget gameOptionsPanel() => LayoutBuilder(
