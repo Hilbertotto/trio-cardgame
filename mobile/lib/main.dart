@@ -1246,22 +1246,28 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           ),
         ),
         Positioned(
-          left: size.maxWidth * .08,
-          right: size.maxWidth * .08,
-          top: size.maxHeight * .47,
-          height: size.maxHeight * .095,
+          left: size.maxWidth * .085,
+          right: size.maxWidth * .085,
+          top: size.maxHeight * .498,
+          height: size.maxHeight * .055,
           child: Stack(
             fit: StackFit.expand,
             children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 160),
-                child: Image.asset(
-                  serverMode
-                      ? 'assets/design/game_mode_server.png'
-                      : 'assets/design/game_mode_machine.png',
-                  key: ValueKey<bool>(serverMode),
-                  fit: BoxFit.fill,
-                ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Row(children: [
+                  for (final isServer in [false, true]) Expanded(
+                    child: ColoredBox(
+                      color: serverMode == isServer ? const Color(0xffffcc38) : const Color(0xff003d39),
+                      child: Center(child: FittedBox(fit: BoxFit.scaleDown, child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('${serverMode == isServer ? '✓ ' : ''}${isServer ? 'Szerver játék' : 'Gépi játék'}',
+                          style: TextStyle(fontFamily: 'serif', fontWeight: FontWeight.w900,
+                            color: serverMode == isServer ? const Color(0xff003d39) : const Color(0xfffff0c7))),
+                      ))),
+                    ),
+                  ),
+                ]),
               ),
               Row(
                 children: [
@@ -1298,8 +1304,8 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           Positioned(
             left: size.maxWidth * .16,
             right: size.maxWidth * .16,
-            top: size.maxHeight * .57,
-            height: size.maxHeight * .055,
+            top: size.maxHeight * .557,
+            height: size.maxHeight * .035,
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(

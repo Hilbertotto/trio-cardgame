@@ -1,5 +1,7 @@
 # TRIO aktuális átadás
 
+- 2026-11-20: Egységesített beállításpanel dupla játékmódkerete javítva: a régi keretes módválasztó kép helyett saját kitöltés és felirat a panel aranykeretén belül; nehézségválasztó is a kereten belül. Flutter 3/3 teszt, debug build sikeres, emulátor és Drive APK frissítve. Kézi vizuális próba szükséges.
+
 ## Egységesített képkészlet – 2026-11-20
 
 - TRIO_egysegesitett_magyar_kepek.zip beépítve: 107 képfájl, ebből 77 eltérő. Az összes képméret változatlan.
