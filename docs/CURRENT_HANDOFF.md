@@ -1,5 +1,11 @@
 # TRIO aktuális átadás
 
+## Profilnév és győzelmi érmejelzés – 2026-11-20
+
+- Helyi játékban a bejelentkezett profil neve jelenik meg; a nevet a kliens menti és profilfrissítésből is átveszi.
+- A győzelmi panel arany érmeikonnal mutatja a játék eleji és szerverről frissített egyenleg különbségét, alatta az egyenleget. A jutalom pontos külön API-mezőre váltása később javasolt, ha párhuzamos jóváírások is lehetnek.
+- Flutter tesztek 3/3, debug build és emulátortelepítés sikeres.
+
 ## Animált szabálybemutató – 2026-11-20
 
 - A szabálymodal 15 másodperces ismétlődő lapfordítós bemutatót kapott: két eltérő lap, két egyforma és egy eltérő, végül három egyforma.

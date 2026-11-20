@@ -109,6 +109,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   Timer? networkTimer;
   int? turnTimeoutRemaining;
   int? coins;
+  int? gameStartingCoins;
   String? localGameId;
   List<int> networkSeats = [];
   bool networkSyncing = false;
@@ -190,6 +191,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     super.initState();
     api.restoreSession().then((_) {
       if (mounted) setState(() => coins = api.coins);
+      if (api.isAuthenticated) refreshOnlineProfile();
     });
   }
 
@@ -200,6 +202,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   }
 
   void startNetworkGame(TrioRoom room) {
+    gameStartingCoins = api.coins;
     networkTimer?.cancel();
     networkRoomCode = room.code;
     serverMode = true;
@@ -513,7 +516,9 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
       deck.removeRange(0, d[0]);
       return P(
         i == 0
-            ? 'Játékos 1'
+            ? (api.isAuthenticated && (api.playerName?.trim().isNotEmpty ?? false)
+                ? api.playerName!.trim()
+                : 'Játékos 1')
             : (auto ? 'Gép ' + i.toString() : 'Játékos ' + (i + 1).toString()),
         auto && i > 0,
         h,
@@ -526,6 +531,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
       busy = false;
       gameOver = false;
       winner = '';
+      gameStartingCoins = api.coins;
       playing = true;
       boardReady = false;
       message = 'Válassz asztali lapot vagy egy játékos szélső lapját!';
@@ -820,19 +826,37 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    if (serverMode && coins != null)
+                    if (coins != null && gameStartingCoins != null && coins! > gameStartingCoins!)
                       Positioned(
                         left: panel.maxWidth * .18,
                         right: panel.maxWidth * .18,
-                        top: panel.maxHeight * .53,
-                        height: panel.maxHeight * .055,
-                        child: Center(
-                          child: Text(
-                            'Érmeegyenleg: $coins',
-                            style: TextStyle(
-                              color: const Color(0xff003d39),
-                              fontSize: panel.maxWidth * .032,
-                              fontWeight: FontWeight.w900,
+                        top: panel.maxHeight * .50,
+                        height: panel.maxHeight * .10,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: const Color(0xff003d39),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: const Color(0xffffcf40), width: 2),
+                            boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 8)],
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.monetization_on, color: Color(0xffffcf40), size: 42),
+                                  const SizedBox(width: 8),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text('+${coins! - gameStartingCoins!} érme', style: const TextStyle(color: Color(0xffffcf40), fontSize: 24, fontWeight: FontWeight.w900)),
+                                      Text('Egyenleg: $coins', style: const TextStyle(color: Color(0xfffff0c7), fontSize: 12)),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -100,6 +100,7 @@ class TrioApi {
   final http.Client _client;
   String? _token;
   int? playerId;
+  String? playerName;
   int? coins;
 
   bool get isAuthenticated => _token != null;
@@ -108,16 +109,19 @@ class TrioApi {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('trio.auth.token');
     playerId = prefs.getInt('trio.auth.player_id');
+    playerName = prefs.getString('trio.auth.player_name');
     coins = prefs.getInt('trio.auth.coins');
   }
 
   Future<void> clearSession() async {
     _token = null;
     playerId = null;
+    playerName = null;
     coins = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('trio.auth.token');
     await prefs.remove('trio.auth.player_id');
+    await prefs.remove('trio.auth.player_name');
     await prefs.remove('trio.auth.coins');
   }
 
@@ -125,6 +129,7 @@ class TrioApi {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('trio.auth.token', _token!);
     if (playerId != null) await prefs.setInt('trio.auth.player_id', playerId!);
+    if (playerName != null) await prefs.setString('trio.auth.player_name', playerName!);
     if (coins != null) await prefs.setInt('trio.auth.coins', coins!);
   }
 
@@ -142,6 +147,7 @@ class TrioApi {
     if (player is Map<String, dynamic>) {
       final data = _resource(player);
       playerId = (data['id'] as num?)?.toInt();
+      playerName = data['name'] as String?;
       coins = (data['coins'] as num?)?.toInt();
     }
     if (_token == null || _token!.isEmpty) {
@@ -164,6 +170,7 @@ class TrioApi {
     if (player is Map<String, dynamic>) {
       final data = _resource(player);
       playerId = (data['id'] as num?)?.toInt();
+      playerName = data['name'] as String?;
       coins = (data['coins'] as num?)?.toInt();
     }
     if (_token == null || _token!.isEmpty) {
@@ -211,6 +218,7 @@ class TrioApi {
         .timeout(const Duration(seconds: 15));
     final data = _resource(_decode(response));
     coins = (data['coins'] as num?)?.toInt() ?? coins;
+    playerName = data['name'] as String? ?? playerName;
     if (_token != null) await _persistSession();
   }
 
