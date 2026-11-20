@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import 'trio_api.dart';
 import 'rules_card_demo.dart';
+import 'leaderboard_page.dart';
 
 bool isWinningTrio(int trioValue, int trioCount) =>
     trioValue == 7 || trioCount >= 3;
@@ -1112,7 +1113,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           ),
         ),
         Positioned(
-          left: MediaQuery.sizeOf(context).width * .50,
+          left: MediaQuery.sizeOf(context).width * .66,
           right: MediaQuery.sizeOf(context).width * .04,
           bottom: MediaQuery.sizeOf(context).height * .035,
           height: MediaQuery.sizeOf(context).height * .085,
@@ -1121,6 +1122,13 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             label: 'Játékszabály',
             child: InkWell(onTap: showRulesModal),
           ),
+        ),
+        Positioned(
+          left: MediaQuery.sizeOf(context).width * .35,
+          right: MediaQuery.sizeOf(context).width * .35,
+          bottom: MediaQuery.sizeOf(context).height * .06,
+          height: MediaQuery.sizeOf(context).height * .06,
+          child: Semantics(button: true, label: 'Ranglista', child: InkWell(onTap: showLeaderboard)),
         ),
         Positioned(
           left: MediaQuery.sizeOf(context).width * .08,
@@ -1157,6 +1165,12 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
         gameOptionsPanel(),
     ],
   );
+
+  Future<void> showLeaderboard() async {
+    if (!api.isAuthenticated && !await showGoogleLogin()) return;
+    if (!mounted) return;
+    await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => LeaderboardPage(api: api)));
+  }
 
   Widget gameOptionsPanel() => LayoutBuilder(
     builder: (_, screen) {

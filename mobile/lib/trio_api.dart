@@ -302,6 +302,12 @@ class TrioApi {
     if (response.statusCode != 204) _decode(response);
   }
 
+  Future<Map<String, dynamic>> getLeaderboard() async {
+    final response = await _client.get(Uri.parse('$baseUrl/leaderboard'), headers: _headers)
+        .timeout(const Duration(seconds: 15));
+    return _decode(response);
+  }
+
   Map<String, String> get _headers {
     final token = _token;
     if (token == null) {
