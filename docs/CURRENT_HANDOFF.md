@@ -1,5 +1,7 @@
 # TRIO aktuális átadás
 
+- 2026-11-20: Csatlakozás/Belépés felirat betűmérete 25-ről 22-re csökkent, stílus megtartva. Debug build sikeres, emulátor frissítve.
+
 ## Hangok és szerverpanel tipográfia – 2026-11-20
 
 - Android natív MethodChannel és halk ToneGenerator jelzés: lapfelfedés rövid beep, trió rövid ACK. Média hangerőt követ. Helyi és online felfedéshez bekötve; hangzás kézi ellenőrzendő.

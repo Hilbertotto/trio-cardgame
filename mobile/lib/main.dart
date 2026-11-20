@@ -1652,7 +1652,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                           padding: EdgeInsets.only(left: box.maxWidth * .23, right: 12),
                           child: Center(child: FittedBox(child: Text(
                             codeController.text.trim().isEmpty ? 'Csatlakozás ($count fő)' : 'Belépés a szobába',
-                            style: const TextStyle(color: Color(0xfffff0c7), fontSize: 25, fontFamily: 'serif', fontWeight: FontWeight.w900, shadows: [Shadow(color: Colors.black54, offset: Offset(0, 2), blurRadius: 2)]),
+                            style: const TextStyle(color: Color(0xfffff0c7), fontSize: 22, fontFamily: 'serif', fontWeight: FontWeight.w900, shadows: [Shadow(color: Colors.black54, offset: Offset(0, 2), blurRadius: 2)]),
                           ))),
                         ),
                       )),
