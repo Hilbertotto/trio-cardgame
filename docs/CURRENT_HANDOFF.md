@@ -1,5 +1,7 @@
 # TRIO aktuális átadás
 
+- 2026-11-21: Felhasználói kérésre a ca97fe4 játékindító-panel magasság-, betűméret- és térközváltozásai visszaállítva az előző állapotra. Debug APK sikeres; emulátor telepítés és indítás sikeres. Drive TRIO-test-latest.apk és TRIO-uj-design-telefon.apk frissítve.
+
 - 2026-11-20: Játékindító modal magassága növelve (képernyő max. 86%-a), módválasztó betűmérete 16, nehézségsáv magassága növelve a zsúfoltság csökkentésére. Flutter tesztek 3/3, debug build és emulátortelepítés sikeres. Drive TRIO-test-latest.apk frissítve. A Play AAB korábbi elrendezést tartalmaz, még nem feltöltött.
 
 ## Play előkészítés – 2026-11-20
