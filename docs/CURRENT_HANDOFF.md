@@ -1,5 +1,12 @@
 # TRIO aktuális átadás
 
+## Teljes másikgépes átadás – 2026-11-22
+
+- Drive backups/teljes-atadas-20261122-201842: forrás+képek ZIP, aktuális debug APK, Android aláírás, OAuth konfiguráció, SSH kulcspár/known_hosts, alagút és telepítőszkriptek, helyi SDK-konfiguráció referencia, kontextus.
+- Szerver production.env frissen SSH-n lementve, külön laptop-local.env. TRIO Apache vhost és queue/reverb systemd service fájlok is elmentve.
+- OLVASS-EL.md az átadási mappában visszaállítási útmutatóval. Éles adatbázis és TLS privát kulcs nem része a fejlesztői átadásnak.
+- Jelenlegi program: 5787530 régi alap + két új felső gomb + új Google-belépési panel (af04e55). Minden kód GitHubon, titkok csak Drive-on. Új build nem kellett ebben a mentési menetben.
+
 - 2026-11-22: Google bejelentkezési modal a felhasználó Ornamentális aranykeretes türkiz paneljével (google_login_panel.png). Képarány 1217/1293, belépés és vissza hitboxok a grafika szerint, külön hibajelzés/töltés. A kezdőképernyő háttere nem változott. Flutter tesztek 3/3, debug build sikeres; emulátor és Drive TRIO-test-latest.apk frissítve.
 
 - 2026-11-22: A visszaállított 5787530 alapra kizárólag a home_button.png és settings_button.png új aranykeretes grafikája került a Drive uj design/assets/design mappájából. Bal/jobb felső játéktérgombok; működésük változatlan. Debug build sikeres, emulátor és Drive TRIO-test-latest.apk frissítve. A többi régi grafika maradt.
