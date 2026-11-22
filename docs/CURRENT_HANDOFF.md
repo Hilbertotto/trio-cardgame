@@ -1,24 +1,12 @@
 # TRIO aktuális átadás
 
-- 2026-11-21: Felhasználói kérésre a ca97fe4 játékindító-panel magasság-, betűméret- és térközváltozásai visszaállítva az előző állapotra. Debug APK sikeres; emulátor telepítés és indítás sikeres. Drive TRIO-test-latest.apk és TRIO-uj-design-telefon.apk frissítve.
+## Pontos régi verzió visszaállítása – 2026-11-22
 
-- 2026-11-20: Játékindító modal magassága növelve (képernyő max. 86%-a), módválasztó betűmérete 16, nehézségsáv magassága növelve a zsúfoltság csökkentésére. Flutter tesztek 3/3, debug build és emulátortelepítés sikeres. Drive TRIO-test-latest.apk frissítve. A Play AAB korábbi elrendezést tartalmaz, még nem feltöltött.
-
-## Play előkészítés – 2026-11-20
-
-- Aláírt Play AAB elkészült: G:\Saját meghajtó\applikacio\trio\TRIO-1.0.3-build4-play.aab. VersionName 1.0.3, versionCode 4. Külön ASCII buildmásolat: C:\dev\trio-play-build, eredeti upload kulccsal.
-- Flutter release utóellenőrzés strip-debug-symbols hibát jelzett; közvetlen Gradle bundleRelease sikeres, jarsigner: jar verified (önaláírt cert és ZIP/JarInputStream figyelmeztetések).
-- Play Console feltöltés NEM történt meg: olvasható a Chrome állapota, de UI kattintás geometry unavailable, billentyűs navigálás nem változtatott oldalt.
-- Konzol szerint piszkozat, hiányos adatlap, 0 zárt tesztelő; 12 tesztelő és 14 nap szükséges éles hozzáférés igényléséhez. Nyílt teszt jelenleg nem indítható.
-
-- 2026-11-20: Egységesített beállításpanel dupla játékmódkerete javítva: a régi keretes módválasztó kép helyett saját kitöltés és felirat a panel aranykeretén belül; nehézségválasztó is a kereten belül. Flutter 3/3 teszt, debug build sikeres, emulátor és Drive APK frissítve. Kézi vizuális próba szükséges.
-
-## Egységesített képkészlet – 2026-11-20
-
-- TRIO_egysegesitett_magyar_kepek.zip beépítve: 107 képfájl, ebből 77 eltérő. Az összes képméret változatlan.
-- Régi teljes képkészlet ZIP: G:\Saját meghajtó\applikacio\trio\TRIO-regi-kepek-20261120-163604.zip. A csere előtti Git commit: 5787530; innen az assets/res fájlok külön is visszaállíthatók.
-- A felhasználó kifejezetten kéri a régi készlet megtartását esetleges visszaállításhoz.
-- Flutter tesztek 3/3 és debug APK build sikeres. Emulátor frissítve, Drive TRIO-test-latest.apk frissítve. Vizuális felhasználói értékelés következik.
+- Felhasználói kérés: a teljes játék álljon vissza az összes kép kikérése ELŐTTI kódra.
+- Cél commit: 5787530 (2026-11-20 15:15, Add trio and winner haptic feedback). A programkód és assets fájlok teljesen erre a snapshotra álltak vissza; Git diff a célhoz képest üres a mobile/app/routes/config/database/tests útvonalakon.
+- A későbbi állapot megőrizve GitHub backup/before-restore-20261122 ágon (10c7f22).
+- Flutter tesztek 3/3, debug build sikeres; emulátorra telepítve. Drive: TRIO-visszaallitott-5787530.apk és TRIO-test-latest.apk frissítve. A korábbi TRIO-uj-design-telefon.apk fájlnév is ezt a visszaállított buildet tartalmazza.
+- Éles adatbázishoz nem nyúltunk; a szerver alkalmazáskódja a célverzió óta nem változott.
 
 ## Négy ranglistanézet és rezgés – 2026-11-20
 
