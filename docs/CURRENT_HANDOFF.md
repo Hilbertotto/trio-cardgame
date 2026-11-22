@@ -1,5 +1,7 @@
 # TRIO aktuális átadás
 
+- 2026-11-22: Google bejelentkezési modal a felhasználó Ornamentális aranykeretes türkiz paneljével (google_login_panel.png). Képarány 1217/1293, belépés és vissza hitboxok a grafika szerint, külön hibajelzés/töltés. A kezdőképernyő háttere nem változott. Flutter tesztek 3/3, debug build sikeres; emulátor és Drive TRIO-test-latest.apk frissítve.
+
 - 2026-11-22: A visszaállított 5787530 alapra kizárólag a home_button.png és settings_button.png új aranykeretes grafikája került a Drive uj design/assets/design mappájából. Bal/jobb felső játéktérgombok; működésük változatlan. Debug build sikeres, emulátor és Drive TRIO-test-latest.apk frissítve. A többi régi grafika maradt.
 
 ## Pontos régi verzió visszaállítása – 2026-11-22

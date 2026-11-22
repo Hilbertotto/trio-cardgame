@@ -1383,47 +1383,29 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
   Future<bool> showGoogleLogin() async {
     if (api.isAuthenticated) return true;
     var loading = false;
-    var status = 'A szerverjátékhoz jelentkezz be a Google-fiókoddal.';
+    var status = '';
 
     return await showDialog<bool>(
           context: context,
           barrierDismissible: false,
           builder: (dialogContext) => StatefulBuilder(
-            builder: (context, setModalState) => AlertDialog(
-              backgroundColor: const Color(0xff07534d),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-                side: const BorderSide(color: Color(0xff8ff1d7), width: 3),
-              ),
-              title: const Text(
-                'BEJELENTKEZÉS',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xffffd33f),
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              content: SizedBox(
-                width: 340,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.account_circle,
-                      size: 72,
-                      color: Color(0xfffff0c7),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      status,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Color(0xfffff0c7)),
-                    ),
-                    const SizedBox(height: 18),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: loading
+            builder: (context, setModalState) => Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.all(14),
+              child: AspectRatio(
+                aspectRatio: 1217 / 1293,
+                child: LayoutBuilder(builder: (_, panel) => Stack(children: [
+                  Positioned.fill(child: Image.asset('assets/design/google_login_panel.png', fit: BoxFit.fill)),
+                  Positioned(
+                    left: panel.maxWidth * .075,
+                    right: panel.maxWidth * .075,
+                    top: panel.maxHeight * .54,
+                    height: panel.maxHeight * .14,
+                    child: Semantics(
+                      button: true,
+                      label: 'Belépés Google-fiókkal',
+                      child: InkWell(
+                        onTap: loading
                             ? null
                             : () async {
                                 setModalState(() => loading = true);
@@ -1479,21 +1461,31 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                                   }
                                 }
                               },
-                        icon: const Icon(Icons.login),
-                        label: const Text('BELÉPÉS GOOGLE-FIÓKKAL'),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: loading
+                  ),
+                  Positioned(
+                    left: panel.maxWidth * .12,
+                    right: panel.maxWidth * .12,
+                    top: panel.maxHeight * .69,
+                    height: panel.maxHeight * .055,
+                    child: loading
+                        ? const Center(child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Color(0xffffd33f))))
+                        : Center(child: Text(status, textAlign: TextAlign.center, style: const TextStyle(color: Color(0xfffff0c7), fontSize: 12))),
+                  ),
+                  Positioned(
+                    left: panel.maxWidth * .73,
+                    right: panel.maxWidth * .09,
+                    top: panel.maxHeight * .745,
+                    height: panel.maxHeight * .065,
+                    child: Semantics(button: true, label: 'Vissza', child: InkWell(
+                  onTap: loading
                       ? null
                       : () => Navigator.pop(dialogContext, false),
-                  child: const Text('VISSZA'),
-                ),
-              ],
+                    )),
+                  ),
+                ])),
+              ),
             ),
           ),
         ) ??
