@@ -96,6 +96,8 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     (_) => List<GlobalKey>.generate(12, (_) => GlobalKey()),
   );
   final revealSlotKeys = List<GlobalKey>.generate(3, (_) => GlobalKey());
+  final trioPileKeys = List<GlobalKey>.generate(6, (_) => GlobalKey());
+  int collectedRevealCount = 0;
   int count = 6, turn = 0, turnSerial = 0;
   BotDifficulty botDifficulty = BotDifficulty.soft;
   bool auto = true,
@@ -206,6 +208,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     gameStartingCoins = api.coins;
     networkTimer?.cancel();
     networkRoomCode = room.code;
+    collectedRevealCount = 0;
     serverMode = true;
     auto = false;
     applyNetworkRoom(room);
@@ -293,6 +296,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           (card['slot'] as num).toInt(),
         );
       }).toList();
+      if (shown.length < 3) collectedRevealCount = 0;
       turn = max(0, networkSeats.indexOf(serverTurn));
       busy = state['resolve_at'] != null || botSeats.contains(serverTurn);
       message = state['message'] as String? ?? 'A játék elindult.';
@@ -389,7 +393,18 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
           if (!mounted) return;
         }
       }
-      applyNetworkRoom(room);
+      if (raw.length == 3 &&
+          collectedRevealCount == 0 &&
+          shown.length == 3 &&
+          shown.every((card) => card.value == shown.first.value)) {
+        final player = networkSeats.indexOf(
+          (room.gameState!['turn_seat'] as num?)?.toInt() ?? 1,
+        );
+        if (player >= 0 && !await collectTrio(player)) return;
+      }
+      if (mounted && playing && networkRoomCode == room.code) {
+        applyNetworkRoom(room);
+      }
     } finally {
       networkSyncing = false;
     }
@@ -467,7 +482,29 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     return topLeft & box.size;
   }
 
-  Future<void> flyCard(int value, GlobalKey fromKey, GlobalKey toKey) async {
+  Future<bool> collectTrio(int player) async {
+    final cards = shown;
+    setState(() => busy = true);
+    for (int i = 0; i < cards.length; i++) {
+      final jump = flyCard(
+        cards[i].value,
+        revealSlotKeys[i],
+        trioPileKeys[player],
+        jump: true,
+      );
+      setState(() => collectedRevealCount = i + 1);
+      await jump;
+      if (!mounted || !playing || !identical(shown, cards)) return false;
+    }
+    return true;
+  }
+
+  Future<void> flyCard(
+    int value,
+    GlobalKey fromKey,
+    GlobalKey toKey, {
+    bool jump = false,
+  }) async {
     final overlay = Overlay.of(context);
     final overlayBox = overlay.context.findRenderObject();
     if (overlayBox is! RenderBox) return;
@@ -477,22 +514,29 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
 
     final controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 650),
+      duration: Duration(milliseconds: jump ? 320 : 650),
     );
-    final curved = CurvedAnimation(
-      parent: controller,
-      curve: Curves.easeInOutCubic,
-    );
+    final landing = jump
+        ? Rect.fromCenter(
+            center: to.center,
+            width: to.width * .42,
+            height: to.height * .62,
+          )
+        : to;
     late final OverlayEntry entry;
     entry = OverlayEntry(
       builder: (_) => AnimatedBuilder(
-        animation: curved,
+        animation: controller,
         builder: (_, child) {
-          final t = curved.value;
-          final rect = Rect.lerp(from, to, t)!;
+          final t = controller.value;
+          final progress = Curves.easeInOutCubic.transform(t);
+          var rect = Rect.lerp(from, landing, progress)!;
+          if (jump) rect = rect.shift(Offset(0, -sin(pi * t) * 44));
           return Positioned.fromRect(rect: rect, child: child!);
         },
-        child: IgnorePointer(child: face(value, w: to.width, framed: false)),
+        child: IgnorePointer(
+          child: face(value, w: landing.width, framed: false),
+        ),
       ),
     );
     overlay.insert(entry);
@@ -537,6 +581,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     setState(() {
       turn = 0;
       shown = [];
+      collectedRevealCount = 0;
       busy = false;
       gameOver = false;
       winner = '';
@@ -649,9 +694,9 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
       next();
     } else if (shown.length == 3) {
       final v = shown.first.value;
-      ps[turn].trios.add(v);
+      final player = ps[turn];
       unawaited(playGameSound('trio'));
-      final won = isWinningTrio(v, ps[turn].trios.length);
+      final won = isWinningTrio(v, player.trios.length + 1);
       unawaited(resultVibration(winner: won));
       setState(() {
         busy = true;
@@ -659,9 +704,13 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             ? ps[turn].name + ' megnyerte a játékot!'
             : 'TRIO! A ' + v.toString() + '-es hármas megvan.';
       });
-      await Future.delayed(const Duration(seconds: 2));
-      if (!mounted) return;
+      final cards = shown;
+      await Future<void>.delayed(const Duration(milliseconds: 350));
+      if (!mounted || !playing || !identical(shown, cards)) return;
+      if (!await collectTrio(turn)) return;
+      player.trios.add(v);
       shown.clear();
+      collectedRevealCount = 0;
       if (won) {
         setState(() {
           gameOver = true;
@@ -781,7 +830,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     ),
   );
 
-  Widget revealSlot(int i) => i < shown.length
+  Widget revealSlot(int i) => i >= collectedRevealCount && i < shown.length
       ? _RevealFace(reveal: shown[i])
       : const SizedBox.expand();
 
@@ -2082,11 +2131,12 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
     ),
   );
 
-  Widget trioCounter(int amount) => SizedBox(
+  Widget trioCounter(int player) => SizedBox(
+    key: trioPileKeys[player],
     width: 72,
     height: 86,
     child: Image.asset(
-      'assets/avatars/trio_count_${amount.clamp(0, 3)}.png',
+      'assets/avatars/trio_count_${ps[player].trios.length.clamp(0, 3)}.png',
       fit: BoxFit.contain,
     ),
   );
@@ -2149,7 +2199,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
             fit: BoxFit.contain,
           ),
         ),
-        Positioned(left: -18, top: 20, child: trioCounter(ps[p].trios.length)),
+        Positioned(left: -18, top: 20, child: trioCounter(p)),
         Align(
           alignment: const Alignment(0, .46),
           child: FractionallySizedBox(
@@ -2459,7 +2509,7 @@ class _TrioGameState extends State<TrioGame> with TickerProviderStateMixin {
                     fit: BoxFit.contain,
                   ),
                 ),
-                Positioned(left: -18, top: 20, child: trioCounter(ps[0].trios.length)),
+                Positioned(left: -18, top: 20, child: trioCounter(0)),
                 Align(
                   alignment: const Alignment(0, .46),
                   child: FractionallySizedBox(

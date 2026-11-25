@@ -1,5 +1,20 @@
 # TRIO aktuális átadás
 
+## Ugró triólapok – 2026-11-25
+
+- Helyi és szerveres játékban a megszerzett trió lapjai külön-külön, íves mozgással a játékos avatarja melletti paklira ugranak. A számláló az utolsó lap után frissül.
+- Flutter widgettesztek: 4/4 sikeres. A debug APK elkészült és sikeresen elindult a TRIO_Pixel_10_Pro Android 16 emulátoron.
+- Következő kézi ellenőrzés: egy helyi és egy online trió végigjátszása.
+
+## Munkapéldány visszaállítása ezen a Windows-gépen – 2026-11-22
+
+- Helyi munkapéldány: C:\dev\trio-cardgame. Az átadási forrás-ZIP fájllistája, fájlméretei és CRC-értékei egyeztek a 99f5ed1 Git-pillanatképpel.
+- PHP 8.5.12 alatt a Composer telepítése sikerült, az ékezetes ideiglenes útvonal helyett erre a futásra C:\dev\trio-temp használatával. A Laravel-tesztek 24/24 sikeresek egyszer használatos helyi APP_KEY mellett.
+- A meglévő köridőtesztek a 90 mp alapidőt és a 30 mp türelmi időt követik. A napi ranglistateszt külön elmenti a tranzakciók időbélyegeit.
+- Flutter 3.44.9 helyi SDK: C:\dev\trio-flutter. OpenJDK 17 telepítve. Flutter widgettesztek: 7/7 sikeres. Az új tesztek a Google-panel nyitását és bezárását, valamint mindhárom nehézség kiválasztását, a meccs indítását és a két felső gombot ellenőrzik.
+- Android debug APK build sikeres (mobile/build/app/outputs/flutter-apk/app-debug.apk). A buildhez a PUB_CACHE értéke C:\dev\trio-pub, mert a Ninja az ékezetes alapértelmezett útvonalon nem találta a JNI buildkönyvtárát. SDK: C:\android, Android 36, NDK 28.2.13676358, CMake 3.22.1.
+- Az Android emulátor hardveres gyorsítás nélkül nem indult el. A következő kézi próba az arany Főoldal/Beállítások gomb, a Google-belépési panel és a három botnehézség ellenőrzése eszközön.
+
 ## Teljes másikgépes átadás – 2026-11-22
 
 - Drive backups/teljes-atadas-20261122-201842: forrás+képek ZIP, aktuális debug APK, Android aláírás, OAuth konfiguráció, SSH kulcspár/known_hosts, alagút és telepítőszkriptek, helyi SDK-konfiguráció referencia, kontextus.

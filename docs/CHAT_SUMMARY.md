@@ -1,6 +1,15 @@
 # TRIO fejlesztési beszélgetés összesítő
 
-Utolsó frissítés: 2026-11-19
+Utolsó frissítés: 2026-11-25
+
+## 2026. november 24–25. · Windows és trióanimáció
+
+- A GitHub-forrás a C:\dev\trio-cardgame mappába került. Helyi Laravel SQLite-adatbázissal indult, az /up végpont HTTP 200-at adott. A tesztfutásban 21/24 Laravel-teszt ment át.
+- Az USB-n csatlakozó készülék hiányában két Android-emulátor készült. A Windows Hypervisor Platform az újraindítás után működött. A TRIO_Pixel_10_Pro hivatalos Pixel 10 Pro profillal, Android 16-tal és 1280 × 2856 felbontással fut.
+- A megszerzett trió három lapja egyenként ívben ugrik a megszerző játékos avatarja melletti paklira. A számláló a harmadik lap után frissül. Flutter widgettesztek 4/4. A debug APK sikeresen elindult a Pixel 10 Pro emulátoron.
+- A helyi és online trió kézi látványellenőrzése még hátravan. A beszélgetés üzeneteit és végső válaszait a [2026-11-25-i átirat](CHAT_TRANSCRIPT_2026-11-25.md) tartalmazza.
+
+## Korábbi összefoglaló · 2026-11-19
 
 ## Projekt és környezet
 

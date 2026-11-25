@@ -1,6 +1,6 @@
 # TRIO projektmemória
 
-Utolsó frissítés: 2026-11-19
+Utolsó frissítés: 2026-11-25
 
 ## Cél
 
@@ -40,6 +40,7 @@ Működjön helyi gépi ellenfelekkel és internetes többjátékos módban.
 - Egyedi teljes képernyős türkiz játéktér, mexikói kártyák, avatarok, névtáblák, Lo/Hi gombok, győzelmi panel.
 - A játékoselrendezés és a középső laprács a játékosszámtól függ.
 - Lapválasztási hang, lapmozgatási animáció és soron lévő játékos jelölés van.
+- A trió lapjai egymás után a triót megszerző játékos avatarja melletti paklira ugranak.
 - Fő mobil forrás: `mobile/lib/main.dart`; API-kliens: `mobile/lib/trio_api.dart`.
 
 ## Szerver jelenlegi állapota
